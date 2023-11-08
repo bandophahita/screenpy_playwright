@@ -39,7 +39,8 @@ class BrowseTheWebSynchronously:
         browser: Browser,
     ) -> SelfBrowseTheWebSynchronously:
         """Supply a pre-defined Playwright browser to use."""
-        return cls(playwright, browser)
+        cls.playwright = playwright
+        return cls(browser)
 
     @classmethod
     def using_firefox(
@@ -48,26 +49,25 @@ class BrowseTheWebSynchronously:
         """Use a synchronous Firefox browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
-        browser = cls.playwright.firefox.launch()
-        return cls(cls.playwright, browser)
+        return cls(cls.playwright.firefox.launch())
 
     @classmethod
     def using_chromium(
         cls: type[SelfBrowseTheWebSynchronously],
     ) -> SelfBrowseTheWebSynchronously:
         """Use a synchronous Chromium (i.e. Chrome, Edge, Opera, etc.) browser."""
-        cls.playwright = sync_playwright().start()
-        browser = cls.playwright.chromium.launch()
-        return cls(cls.playwright, browser)
+        if cls.playwright is None:
+            cls.playwright = sync_playwright().start()
+        return cls(cls.playwright.chromium.launch())
 
     @classmethod
     def using_webkit(
         cls: type[SelfBrowseTheWebSynchronously],
     ) -> "BrowseTheWebSynchronously":
         """Use a synchronous WebKit (i.e. Safari, etc.) browser."""
-        cls.playwright = sync_playwright().start()
-        browser = cls.playwright.webkit.launch()
-        return cls(cls.playwright, browser)
+        if cls.playwright is None:
+            cls.playwright = sync_playwright().start()
+        return cls(cls.playwright.webkit.launch())
 
     def forget(self: SelfBrowseTheWebSynchronously) -> None:
         """Forget everything you knew about being a playwright."""
@@ -77,12 +77,8 @@ class BrowseTheWebSynchronously:
 
     def __init__(
         self: SelfBrowseTheWebSynchronously,
-        playwright: Playwright,
         browser: Browser,
     ) -> None:
-        if self.__class__.playwright is None:
-            self.__class__.playwright = playwright
-        self.playwright = playwright
         self.browser = browser
         self.current_page: Page = None
         self.pages: Page = []

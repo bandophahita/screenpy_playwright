@@ -10,47 +10,51 @@ from screenpy_playwright.abilities import BrowseTheWebSynchronously
 class TestBrowseTheWebSynchronously:
     mock_path = "screenpy_playwright.abilities.browse_the_web_synchronously"
 
-    @pytest.fixture(scope="class", autouse=True)
+    @pytest.fixture(autouse=True)
     def clean_up_ability(self):
         """Reset the class's playwright attribute to None."""
         yield
         BrowseTheWebSynchronously.playwright = None
 
-    def test_can_be_instantiated(self):
-        btws = BrowseTheWebSynchronously.using(None, None)
+    @pytest.fixture()
+    def mock_playwright(self):
+        yield mock.MagicMock(spec=Playwright)
 
-        assert isinstance(btws, BrowseTheWebSynchronously)
+    @pytest.fixture()
+    def mock_browser(self):
+        yield mock.MagicMock(spec=Browser)
 
-    def test_implements_protocol(self):
-        assert isinstance(BrowseTheWebSynchronously(None, None), Forgettable)
+    def test_can_be_instantiated(self, mock_playwright, mock_browser):
+        btws1 = BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
+        btws2 = BrowseTheWebSynchronously.using_chromium()
+        btws3 = BrowseTheWebSynchronously.using_firefox()
+        btws4 = BrowseTheWebSynchronously.using_webkit()
 
-    def test_sets_class_attribute(self):
-        BrowseTheWebSynchronously.playwright = None
-        mock_playwright = mock.MagicMock(spec=Playwright)
-        mock_browser = mock.MagicMock(spec=Browser)
+        assert isinstance(btws1, BrowseTheWebSynchronously)
+        assert isinstance(btws2, BrowseTheWebSynchronously)
+        assert isinstance(btws3, BrowseTheWebSynchronously)
+        assert isinstance(btws4, BrowseTheWebSynchronously)
+        assert BrowseTheWebSynchronously.playwright is mock_playwright
 
+    def test_implements_protocol(self, mock_browser):
+        assert isinstance(BrowseTheWebSynchronously(mock_browser), Forgettable)
+
+    def test_sets_class_attribute(self, mock_playwright, mock_browser):
         BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
 
-        try:
-            assert BrowseTheWebSynchronously.playwright is mock_playwright
-        finally:
-            # teardown
-            BrowseTheWebSynchronously.playwright = None
+        assert BrowseTheWebSynchronously.playwright is mock_playwright
 
-    def test_can_have_separate_instance_attribute(self):
-        mock_playwright1 = mock.MagicMock(spec=Playwright)
-        mock_playwright2 = mock.MagicMock(spec=Playwright)
-        mock_browser = mock.MagicMock(spec=Browser)
+    def test_can_have_separate_instance_attribute(self, mock_playwright, mock_browser):
         mock_sync_playwright = mock.MagicMock()
-        mock_sync_playwright.return_value.start.return_value = mock_playwright1
+        mock_sync_playwright.return_value.start.return_value = mock_playwright
 
         with mock.patch(f"{self.mock_path}.sync_playwright", mock_sync_playwright):
-            BrowseTheWebSynchronously.using_firefox()  # sets class playwright
-            btws = BrowseTheWebSynchronously.using(mock_playwright2, mock_browser)
+            BrowseTheWebSynchronously.using_chromium()
+            BrowseTheWebSynchronously.using_firefox()
+            BrowseTheWebSynchronously.using_webkit()
+            BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
 
-        try:
-            assert BrowseTheWebSynchronously.playwright is mock_playwright1
-            assert btws.playwright is mock_playwright2
-        finally:
-            # teardown
-            BrowseTheWebSynchronously.playwright = None
+        assert BrowseTheWebSynchronously.playwright is mock_playwright
+        assert mock_playwright.chromium.launch.call_count == 1
+        assert mock_playwright.firefox.launch.call_count == 1
+        assert mock_playwright.webkit.launch.call_count == 1
