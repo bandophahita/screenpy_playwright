@@ -1,4 +1,17 @@
-from playwright.sync_api import sync_playwright, Playwright, Browser
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from playwright.sync_api import sync_playwright
+
+if TYPE_CHECKING:
+    from typing import TypeVar
+
+    from playwright.sync_api import Browser, Page, Playwright
+
+    SelfBrowseTheWebSynchronously = TypeVar(
+        "SelfBrowseTheWebSynchronously", bound="BrowseTheWebSynchronously"
+    )
 
 
 class BrowseTheWebSynchronously:
@@ -17,40 +30,59 @@ class BrowseTheWebSynchronously:
         )
     """
 
-    @staticmethod
-    def using(playwright: Playwright, browser: Browser) -> "BrowseTheWebSynchronously":
+    playwright: Playwright = None
+
+    @classmethod
+    def using(
+        cls: type[SelfBrowseTheWebSynchronously],
+        playwright: Playwright,
+        browser: Browser,
+    ) -> SelfBrowseTheWebSynchronously:
         """Supply a pre-defined Playwright browser to use."""
-        return BrowseTheWebSynchronously(playwright, browser)
+        return cls(playwright, browser)
 
-    @staticmethod
-    def using_firefox() -> "BrowseTheWebSynchronously":
+    @classmethod
+    def using_firefox(
+        cls: type[SelfBrowseTheWebSynchronously],
+    ) -> SelfBrowseTheWebSynchronously:
         """Use a synchronous Firefox browser."""
-        playwright = sync_playwright().start()
-        browser = playwright.firefox.launch()
-        return BrowseTheWebSynchronously(playwright, browser)
+        if cls.playwright is None:
+            cls.playwright = sync_playwright().start()
+        browser = cls.playwright.firefox.launch()
+        return cls(cls.playwright, browser)
 
-    @staticmethod
-    def using_chromium() -> "BrowseTheWebSynchronously":
+    @classmethod
+    def using_chromium(
+        cls: type[SelfBrowseTheWebSynchronously],
+    ) -> SelfBrowseTheWebSynchronously:
         """Use a synchronous Chromium (i.e. Chrome, Edge, Opera, etc.) browser."""
-        playwright = sync_playwright().start()
-        browser = playwright.chromium.launch()
-        return BrowseTheWebSynchronously(playwright, browser)
+        cls.playwright = sync_playwright().start()
+        browser = cls.playwright.chromium.launch()
+        return cls(cls.playwright, browser)
 
-    @staticmethod
-    def using_webkit() -> "BrowseTheWebSynchronously":
+    @classmethod
+    def using_webkit(
+        cls: type[SelfBrowseTheWebSynchronously],
+    ) -> "BrowseTheWebSynchronously":
         """Use a synchronous WebKit (i.e. Safari, etc.) browser."""
-        playwright = sync_playwright().start()
-        browser = playwright.webkit.launch()
-        return BrowseTheWebSynchronously(playwright, browser)
+        cls.playwright = sync_playwright().start()
+        browser = cls.playwright.webkit.launch()
+        return cls(cls.playwright, browser)
 
-    def forget(self) -> None:
+    def forget(self: SelfBrowseTheWebSynchronously) -> None:
         """Forget everything you knew about being a playwright."""
         self.browser.close()
-        if self.playwright:
-            self.playwright.stop()
+        self.playwright.stop()
+        self.__class__.playwright = None
 
-    def __init__(self, playwright: Playwright, browser: Browser) -> None:
+    def __init__(
+        self: SelfBrowseTheWebSynchronously,
+        playwright: Playwright,
+        browser: Browser,
+    ) -> None:
+        if self.__class__.playwright is None:
+            self.__class__.playwright = playwright
         self.playwright = playwright
         self.browser = browser
-        self.current_page = None
-        self.pages = []
+        self.current_page: Page = None
+        self.pages: Page = []

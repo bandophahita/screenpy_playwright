@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from typing import Optional
 
-from screenpy import Actor
 from playwright.sync_api import Locator
+from screenpy import Actor
 
 from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
@@ -22,6 +24,8 @@ class Target:
 
         Target().located_by("#enter-todo-field")
     """
+
+    locator: str | None
 
     @staticmethod
     def the(name: str) -> "Target":
