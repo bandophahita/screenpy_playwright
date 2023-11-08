@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright
 if TYPE_CHECKING:
     from typing import TypeVar
 
-    from playwright.sync_api import Browser, Page, Playwright
+    from playwright.sync_api import Browser, BrowserContext, Page, Playwright
 
     SelfBrowseTheWebSynchronously = TypeVar(
         "SelfBrowseTheWebSynchronously", bound="BrowseTheWebSynchronously"
@@ -36,7 +36,7 @@ class BrowseTheWebSynchronously:
     def using(
         cls: type[SelfBrowseTheWebSynchronously],
         playwright: Playwright,
-        browser: Browser,
+        browser: Browser | BrowserContext,
     ) -> SelfBrowseTheWebSynchronously:
         """Supply a pre-defined Playwright browser to use."""
         cls.playwright = playwright
@@ -77,7 +77,7 @@ class BrowseTheWebSynchronously:
 
     def __init__(
         self: SelfBrowseTheWebSynchronously,
-        browser: Browser,
+        browser: Browser | BrowserContext,
     ) -> None:
         self.browser = browser
         self.current_page: Page = None
