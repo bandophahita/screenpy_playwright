@@ -1,10 +1,13 @@
-from typing import Optional
+from __future__ import annotations
 
-from screenpy import Actor
-from playwright.sync_api import Locator
+from typing import TYPE_CHECKING, Optional
 
 from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
+
+if TYPE_CHECKING:
+    from playwright.sync_api import Locator
+    from screenpy import Actor
 
 
 class Target:
@@ -22,6 +25,8 @@ class Target:
 
         Target().located_by("#enter-todo-field")
     """
+
+    locator: str | None
 
     @staticmethod
     def the(name: str) -> "Target":
