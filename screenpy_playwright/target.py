@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Optional
-
-from playwright.sync_api import Locator
-from screenpy import Actor
+from typing import TYPE_CHECKING, Optional
 
 from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
+
+if TYPE_CHECKING:
+    from playwright.sync_api import Locator
+    from screenpy import Actor
 
 
 class Target:
