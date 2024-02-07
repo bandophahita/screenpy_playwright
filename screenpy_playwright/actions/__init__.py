@@ -1,3 +1,5 @@
+"""Actions enabled by the Abilities in ScreenPy: Playwright."""
+
 from .click import Click
 from .enter import Enter
 from .open import Open

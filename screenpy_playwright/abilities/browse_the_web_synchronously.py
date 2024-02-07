@@ -1,3 +1,5 @@
+"""Enable an Actor to browse the web synchronously."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -30,7 +32,9 @@ class BrowseTheWebSynchronously:
         )
     """
 
-    playwright: Playwright = None
+    playwright: Playwright | None = None
+    current_page: Page | None
+    pages: list[Page]
 
     @classmethod
     def using(
@@ -63,7 +67,7 @@ class BrowseTheWebSynchronously:
     @classmethod
     def using_webkit(
         cls: type[SelfBrowseTheWebSynchronously],
-    ) -> "BrowseTheWebSynchronously":
+    ) -> BrowseTheWebSynchronously:
         """Use a synchronous WebKit (i.e. Safari, etc.) browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
@@ -72,7 +76,8 @@ class BrowseTheWebSynchronously:
     def forget(self: SelfBrowseTheWebSynchronously) -> None:
         """Forget everything you knew about being a playwright."""
         self.browser.close()
-        self.playwright.stop()
+        if self.playwright:
+            self.playwright.stop()
         self.__class__.playwright = None
 
     def __init__(
@@ -80,5 +85,5 @@ class BrowseTheWebSynchronously:
         browser: Browser | BrowserContext,
     ) -> None:
         self.browser = browser
-        self.current_page: Page = None
-        self.pages: Page = []
+        self.current_page = None
+        self.pages = []

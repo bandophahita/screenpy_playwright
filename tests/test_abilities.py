@@ -1,30 +1,25 @@
+from typing import Generator
 from unittest import mock
 
 import pytest
-from playwright.sync_api import Browser, Playwright
-from screenpy.protocols import Forgettable
+from screenpy import Forgettable
 
-from screenpy_playwright.abilities import BrowseTheWebSynchronously
+from screenpy_playwright import BrowseTheWebSynchronously
+
+from .useful_mocks import get_mocked_playwright_and_browser
 
 
 class TestBrowseTheWebSynchronously:
     mock_path = "screenpy_playwright.abilities.browse_the_web_synchronously"
 
     @pytest.fixture(autouse=True)
-    def clean_up_ability(self):
+    def _clean_up_ability(self) -> Generator:
         """Reset the class's playwright attribute to None."""
         yield
         BrowseTheWebSynchronously.playwright = None
 
-    @pytest.fixture()
-    def mock_playwright(self):
-        yield mock.MagicMock(spec=Playwright)
-
-    @pytest.fixture()
-    def mock_browser(self):
-        yield mock.MagicMock(spec=Browser)
-
-    def test_can_be_instantiated(self, mock_playwright, mock_browser):
+    def test_can_be_instantiated(self) -> None:
+        mock_playwright, mock_browser = get_mocked_playwright_and_browser()
         btws1 = BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
         btws2 = BrowseTheWebSynchronously.using_chromium()
         btws3 = BrowseTheWebSynchronously.using_firefox()
@@ -36,15 +31,18 @@ class TestBrowseTheWebSynchronously:
         assert isinstance(btws4, BrowseTheWebSynchronously)
         assert BrowseTheWebSynchronously.playwright is mock_playwright
 
-    def test_implements_protocol(self, mock_browser):
+    def test_implements_protocol(self) -> None:
+        _, mock_browser = get_mocked_playwright_and_browser()
         assert isinstance(BrowseTheWebSynchronously(mock_browser), Forgettable)
 
-    def test_sets_class_attribute(self, mock_playwright, mock_browser):
+    def test_sets_class_attribute(self) -> None:
+        mock_playwright, mock_browser = get_mocked_playwright_and_browser()
         BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
 
         assert BrowseTheWebSynchronously.playwright is mock_playwright
 
-    def test_can_have_separate_instance_attribute(self, mock_playwright, mock_browser):
+    def test_can_have_separate_instance_attribute(self) -> None:
+        mock_playwright, mock_browser = get_mocked_playwright_and_browser()
         mock_sync_playwright = mock.MagicMock()
         mock_sync_playwright.return_value.start.return_value = mock_playwright
 

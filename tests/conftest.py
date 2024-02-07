@@ -1,3 +1,5 @@
+"""Fixtures and configurations for the unit tests."""
+
 from unittest import mock
 
 import pytest
@@ -7,7 +9,7 @@ from screenpy import AnActor
 from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def Tester() -> AnActor:
     """Provide an Actor with mocked web browsing abilities."""
     BrowseTheWeb_Mocked = mock.Mock(spec=BrowseTheWebSynchronously)

@@ -1,6 +1,4 @@
-"""
-Exceptions thrown by screenpy_playwright.
-"""
+"""Exceptions thrown by ScreenPy: Playwright."""
 
 from screenpy.exceptions import ScreenPyError
 

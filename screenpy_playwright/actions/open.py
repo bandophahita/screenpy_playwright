@@ -1,9 +1,18 @@
-import os
+"""Open a URL using the Actor's browser."""
 
-from screenpy import Actor
+from __future__ import annotations
+
+import os
+from typing import TYPE_CHECKING
+
 from screenpy.pacing import beat
 
 from ..abilities import BrowseTheWebSynchronously
+
+if TYPE_CHECKING:
+    from screenpy import Actor
+
+    from ..protocols import PageObject
 
 
 class Open:
@@ -39,7 +48,7 @@ class Open:
         browse_the_web.current_page = page
         browse_the_web.pages.append(page)
 
-    def __init__(self, location: str) -> "Open":
+    def __init__(self, location: str | PageObject) -> None:
         url = getattr(location, "url", location)
         url = f'{os.getenv("BASE_URL", "")}{url}'
         self.url = url
