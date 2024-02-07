@@ -72,6 +72,9 @@ class Target:
         if browse_the_web.current_page is None:
             msg = f"There is no active page! {the_actor} cannot find the {self}."
             raise TargetingError(msg)
+        if self.locator is None:
+            msg = f"{self} does not have a locator set."
+            raise TargetingError(msg)
 
         return browse_the_web.current_page.locator(self.locator)
 
