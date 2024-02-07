@@ -13,6 +13,7 @@ the Playwright browser automation tool.
 from .abilities import *
 from .actions import *
 from .exceptions import TargetingError
+from .protocols import *
 from .questions import *
 from .target import Target
 
@@ -22,6 +23,7 @@ __all__ = [
     "Enter",
     "Number",
     "Open",
+    "PageObject",
     "Target",
     "TargetingError",
     "Text",
