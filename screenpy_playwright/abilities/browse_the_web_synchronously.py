@@ -85,5 +85,5 @@ class BrowseTheWebSynchronously:
         browser: Browser | BrowserContext,
     ) -> None:
         self.browser = browser
-        self.current_page: Page = None
-        self.pages: Page = []
+        self.current_page = None
+        self.pages = []
