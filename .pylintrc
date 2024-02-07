@@ -1,3 +1,0 @@
-[MASTER]
-ignore-paths=^.*/tests/.*$
-disable=unused-argument,no-self-use,too-few-public-methods,no-member,arguments-renamed,invalid-name

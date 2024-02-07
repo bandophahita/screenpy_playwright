@@ -1,3 +1,5 @@
+"""Click on an element."""
+
 from screenpy import Actor
 from screenpy.pacing import beat
 

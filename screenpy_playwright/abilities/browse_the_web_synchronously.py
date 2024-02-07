@@ -1,4 +1,8 @@
-from playwright.sync_api import sync_playwright, Playwright, Browser
+"""Enable an Actor to browse the web synchronously."""
+
+from __future__ import annotations
+
+from playwright.sync_api import Browser, Playwright, sync_playwright
 
 
 class BrowseTheWebSynchronously:
@@ -17,27 +21,29 @@ class BrowseTheWebSynchronously:
         )
     """
 
+    pages: list[type]
+
     @staticmethod
-    def using(playwright: Playwright, browser: Browser) -> "BrowseTheWebSynchronously":
+    def using(playwright: Playwright, browser: Browser) -> BrowseTheWebSynchronously:
         """Supply a pre-defined Playwright browser to use."""
         return BrowseTheWebSynchronously(playwright, browser)
 
     @staticmethod
-    def using_firefox() -> "BrowseTheWebSynchronously":
+    def using_firefox() -> BrowseTheWebSynchronously:
         """Use a synchronous Firefox browser."""
         playwright = sync_playwright().start()
         browser = playwright.firefox.launch()
         return BrowseTheWebSynchronously(playwright, browser)
 
     @staticmethod
-    def using_chromium() -> "BrowseTheWebSynchronously":
+    def using_chromium() -> BrowseTheWebSynchronously:
         """Use a synchronous Chromium (i.e. Chrome, Edge, Opera, etc.) browser."""
         playwright = sync_playwright().start()
         browser = playwright.chromium.launch()
         return BrowseTheWebSynchronously(playwright, browser)
 
     @staticmethod
-    def using_webkit() -> "BrowseTheWebSynchronously":
+    def using_webkit() -> BrowseTheWebSynchronously:
         """Use a synchronous WebKit (i.e. Safari, etc.) browser."""
         playwright = sync_playwright().start()
         browser = playwright.webkit.launch()

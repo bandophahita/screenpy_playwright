@@ -1,13 +1,13 @@
-from screenpy.protocols import Forgettable
+from screenpy import Forgettable
 
-from screenpy_playwright.abilities import BrowseTheWebSynchronously
+from screenpy_playwright import BrowseTheWebSynchronously
 
 
 class TestBrowseTheWebSynchronously:
-    def test_can_be_instantiated(self):
+    def test_can_be_instantiated(self) -> None:
         b = BrowseTheWebSynchronously.using(None, None)
 
         assert isinstance(b, BrowseTheWebSynchronously)
 
-    def test_implements_protocol(self):
+    def test_implements_protocol(self) -> None:
         assert isinstance(BrowseTheWebSynchronously(None, None), Forgettable)

@@ -1,11 +1,19 @@
-from screenpy import Actor
+"""Ask about the text in an element."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from screenpy.pacing import beat
 
-from ..target import Target
+if TYPE_CHECKING:
+    from screenpy import Actor
+
+    from ..target import Target
 
 
 class Text:
-    """Get the text from a target.
+    """Ask for the text from a Target.
 
     Examples::
 
@@ -15,16 +23,32 @@ class Text:
     """
 
     @staticmethod
-    def of_the(target: Target) -> "Text":
+    def of_the(target: Target) -> Text:
+        """Supply the Target whose text to read.
+
+        Args:
+            target: the Target which describes the Element to read.
+
+        Returns:
+            A new instance of Text.
+        """
         return Text(target)
 
     def describe(self) -> str:
-        """Describe the Question."""
+        """Describe the Question.
+
+        Returns:
+            A description of this Question.
+        """
         return f"The text from the {self.target}."
 
     @beat("{} examines the text of the {target}.")
     def answered_by(self, the_actor: Actor) -> str:
-        """Direct the Actor to read the text from the target."""
+        """Direct the Actor to read the text from the target.
+
+        Returns:
+            The text found by the Actor.
+        """
         return self.target.found_by(the_actor).text_content()
 
     def __init__(self, target: Target) -> None:
