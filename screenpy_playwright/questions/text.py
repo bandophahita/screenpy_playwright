@@ -43,7 +43,7 @@ class Text:
         return f"The text from the {self.target}."
 
     @beat("{} examines the text of the {target}.")
-    def answered_by(self, the_actor: Actor) -> str:
+    def answered_by(self, the_actor: Actor) -> str | None:
         """Direct the Actor to read the text from the target.
 
         Returns:

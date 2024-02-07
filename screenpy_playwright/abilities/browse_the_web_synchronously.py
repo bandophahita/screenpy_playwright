@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from playwright.sync_api import Browser, Playwright, sync_playwright
+from playwright.sync_api import Browser, Page, Playwright, sync_playwright
 
 
 class BrowseTheWebSynchronously:
@@ -21,7 +21,8 @@ class BrowseTheWebSynchronously:
         )
     """
 
-    pages: list[type]
+    current_page: Page | None
+    pages: list[Page]
 
     @staticmethod
     def using(playwright: Playwright, browser: Browser) -> BrowseTheWebSynchronously:
