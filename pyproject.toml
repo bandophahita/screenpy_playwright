@@ -80,7 +80,6 @@ tox = {version = "*", optional = true}
 [tool.poetry.extras]
 dev = [
     "pre-commit",
-    "pytest-mock",
     "pytest",
     "tox",
 ]
@@ -89,7 +88,6 @@ dev_all = [
     "coverage",
     "mypy",
     "pre-commit",
-    "pytest-mock",
     "pytest",
     "ruff",
     "sphinx",
@@ -97,7 +95,6 @@ dev_all = [
 ]
 test = [
     "coverage",
-    "pytest-mock",
     "pytest",
 ]
 
