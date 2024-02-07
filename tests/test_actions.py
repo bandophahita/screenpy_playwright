@@ -1,4 +1,5 @@
 import os
+from typing import cast
 from unittest import mock
 
 import pytest
@@ -132,8 +133,9 @@ class TestVisit:
 
         Visit(url).perform_as(Tester)
 
-        mock_browser.new_page.assert_called_once()
-        mock_page = mock_browser.new_page.return_value
+        mock_new_page_func = cast(mock.Mock, mock_browser.new_page)
+        mock_new_page_func.assert_called_once()
+        mock_page = mock_new_page_func.return_value
         mock_page.goto.assert_called_once_with(url)
         assert mock_ability.current_page == mock_page
         assert mock_page in mock_ability.pages
