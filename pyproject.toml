@@ -181,6 +181,7 @@ pre-commit = {version = "*", optional = true}
 pytest = {version = "*", optional = true}
 ruff = {version = "*", optional = true}
 sphinx = {version = "*", optional = true}
+sphinx-rtd-theme = {version = "*", optional = true}
 tox = {version = "*", optional = true}
 
 
@@ -193,9 +194,14 @@ dev = [
     "pytest",
     "ruff",
     "sphinx",
+    "sphinx-rtd-theme",
     "tox",
 ]
 test = [
     "coverage",
     "pytest",
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
 ]
