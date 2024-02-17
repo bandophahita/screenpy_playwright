@@ -67,5 +67,4 @@ add_module_names = False
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     "screenpy": ("https://screenpy-docs.readthedocs.io/en/latest/", None),
-    "selenium": ("https://selenium-python.readthedocs.io/", None),
 }
