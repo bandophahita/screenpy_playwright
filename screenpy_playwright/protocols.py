@@ -7,3 +7,6 @@ class PageObject(Protocol):
     """PageObjects have a URL."""
 
     url: str
+
+
+__all__ = ["PageObject"]
