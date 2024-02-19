@@ -16,4 +16,3 @@ repos:
     hooks:
       - id: mypy
         language_version: python3.12
-
