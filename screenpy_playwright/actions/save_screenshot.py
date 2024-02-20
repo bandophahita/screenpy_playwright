@@ -18,10 +18,10 @@ if TYPE_CHECKING:
 class SaveScreenshot:
     """Save a screenshot of the Actor's current page.
 
-    Use the :meth:`~screenpy_playwright.actions.save_screenshot.and_attach_it`
-    method to indicate that this screenshot should be attached to all reports
-    through the Narrator's adapters. This method also accepts any keyword
-    arguments those adapters might require.
+    Use the :meth:`~SaveScreenshot.and_attach_it` method to indicate that this
+    screenshot should be attached to all reports through the Narrator's
+    adapters. This method also accepts any keyword arguments those adapters
+    might require.
 
     Abilities Required:
         :class:`~screenpy_playwright.abilities.BrowseTheWebSynchronously`
