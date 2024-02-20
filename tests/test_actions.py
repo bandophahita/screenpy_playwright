@@ -192,7 +192,7 @@ class TestSaveScreenshot:
             SaveScreenshot(test_path).and_attach_it(**test_kwargs).perform_as(Tester)
 
         mocked_attachthefile.assert_called_once_with(test_path, **test_kwargs)
-        mocked_path().write.assert_called_once()
+        mocked_path().write_bytes.assert_called_once()
 
     def test_describe(self) -> None:
         assert SaveScreenshot("pth").describe() == "Save screenshot as pth"
