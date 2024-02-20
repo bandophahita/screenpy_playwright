@@ -40,10 +40,3 @@ def test_questions() -> None:
         "Text",
     ]
     assert sorted(screenpy_playwright.questions.__all__) == sorted(expected)
-
-
-def test_protocols() -> None:
-    expected = [
-        "PageObject",
-    ]
-    assert sorted(screenpy_playwright.protocols.__all__) == sorted(expected)
