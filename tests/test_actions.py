@@ -98,55 +98,6 @@ class TestEnter:
         element.fill.assert_called_once_with(text)
 
 
-class TestVisit:
-    def test_can_be_instantiated(self) -> None:
-        v = Visit("")
-
-        assert isinstance(v, Visit)
-
-    def test_implements_protocol(self) -> None:
-        v = Visit("")
-
-        assert isinstance(v, Describable)
-        assert isinstance(v, Performable)
-
-    def test_describe(self) -> None:
-        url = "https://very.secure.url/ssl"
-
-        assert Visit(url).describe() == f"Visit {url}"
-
-    @mock.patch.dict(os.environ, {"BASE_URL": "https://base.url"})
-    def test_environment_base_url(self) -> None:
-        assert Visit("/path").url == "https://base.url/path"
-
-    def test_using_page_object(self) -> None:
-        class PageObject:
-            url = "https://page.object.url/"
-
-        assert Visit(PageObject()).url == "https://page.object.url/"
-
-    @mock.patch.dict(os.environ, {"BASE_URL": "https://base.url"})
-    def test_environment_base_and_page_object_url(self) -> None:
-        class PageObject:
-            url = "/popath"
-
-        assert Visit(PageObject()).url == "https://base.url/popath"
-
-    def test_perform_visit(self, Tester: Actor) -> None:
-        url = "https://example.org/itsdotcom"
-        mock_ability = Tester.ability_to(BrowseTheWebSynchronously)
-        mock_browser = mock_ability.browser
-
-        Visit(url).perform_as(Tester)
-
-        mock_new_page_func = cast(mock.Mock, mock_browser.new_page)
-        mock_new_page_func.assert_called_once()
-        mock_page = mock_new_page_func.return_value
-        mock_page.goto.assert_called_once_with(url)
-        assert mock_ability.current_page == mock_page
-        assert mock_page in mock_ability.pages
-
-
 class TestSaveScreenshot:
 
     class_path = "screenpy_playwright.actions.save_screenshot"
@@ -210,3 +161,52 @@ class TestSaveScreenshot:
         assert isinstance(sss1, SubSaveScreenshot)
         assert isinstance(sss2, SubSaveScreenshot)
         assert isinstance(sss3, SubSaveScreenshot)
+
+
+class TestVisit:
+    def test_can_be_instantiated(self) -> None:
+        v = Visit("")
+
+        assert isinstance(v, Visit)
+
+    def test_implements_protocol(self) -> None:
+        v = Visit("")
+
+        assert isinstance(v, Describable)
+        assert isinstance(v, Performable)
+
+    def test_describe(self) -> None:
+        url = "https://very.secure.url/ssl"
+
+        assert Visit(url).describe() == f"Visit {url}"
+
+    @mock.patch.dict(os.environ, {"BASE_URL": "https://base.url"})
+    def test_environment_base_url(self) -> None:
+        assert Visit("/path").url == "https://base.url/path"
+
+    def test_using_page_object(self) -> None:
+        class PageObject:
+            url = "https://page.object.url/"
+
+        assert Visit(PageObject()).url == "https://page.object.url/"
+
+    @mock.patch.dict(os.environ, {"BASE_URL": "https://base.url"})
+    def test_environment_base_and_page_object_url(self) -> None:
+        class PageObject:
+            url = "/popath"
+
+        assert Visit(PageObject()).url == "https://base.url/popath"
+
+    def test_perform_visit(self, Tester: Actor) -> None:
+        url = "https://example.org/itsdotcom"
+        mock_ability = Tester.ability_to(BrowseTheWebSynchronously)
+        mock_browser = mock_ability.browser
+
+        Visit(url).perform_as(Tester)
+
+        mock_new_page_func = cast(mock.Mock, mock_browser.new_page)
+        mock_new_page_func.assert_called_once()
+        mock_page = mock_new_page_func.return_value
+        mock_page.goto.assert_called_once_with(url)
+        assert mock_ability.current_page == mock_page
+        assert mock_page in mock_ability.pages
