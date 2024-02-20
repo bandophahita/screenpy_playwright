@@ -1,15 +1,55 @@
-from screenpy import Actor, Answerable, Describable
+"""Tests for the Questions an Actor can ask using ScreenPy Playwright."""
 
-from screenpy_playwright import Number, Text
+from unittest import mock
 
-from .useful_mocks import get_mocked_target_and_element
+import pytest
+from screenpy import Actor, Answerable, Describable, UnableToAnswer
+
+from screenpy_playwright import Attribute, BrowseTheWebSynchronously, Number, Text
+
+from .useful_mocks import get_mock_target_class, get_mocked_target_and_locator
+
+FakeTarget = get_mock_target_class()
+TARGET = FakeTarget()
+
+
+class TestAttribute:
+    def test_can_be_instantiated(self) -> None:
+        a1 = Attribute("")
+        a2 = Attribute("").of_the(TARGET)
+
+        assert isinstance(a1, Attribute)
+        assert isinstance(a2, Attribute)
+
+    def test_implements_protocol(self) -> None:
+        a = Attribute("")
+
+        assert isinstance(a, Answerable)
+        assert isinstance(a, Describable)
+
+    def test_raises_error_if_no_target(self, Tester: Actor) -> None:
+        with pytest.raises(UnableToAnswer):
+            Attribute("").answered_by(Tester)
+
+    def test_ask_for_attribute(self, Tester: Actor) -> None:
+        attr = "foo"
+        value = "bar"
+        target, locator = get_mocked_target_and_locator()
+        locator.get_attribute.return_value = value
+        mocked_btws = Tester.ability_to(BrowseTheWebSynchronously)
+        mocked_btws.current_page = mock.Mock()
+
+        assert Attribute(attr).of_the(target).answered_by(Tester) == value
+        target.found_by.assert_called_once_with(Tester)
+        locator.get_attribute.assert_called_once_with(attr)
+
+    def test_describe(self) -> None:
+        assert Attribute("foo").describe() == 'The "foo" attribute of the None.'
 
 
 class TestNumber:
     def test_can_be_instantiated(self) -> None:
-        target, _ = get_mocked_target_and_element()
-
-        n = Number.of(target)
+        n = Number.of(TARGET)
 
         assert isinstance(n, Number)
 
