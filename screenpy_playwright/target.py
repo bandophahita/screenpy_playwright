@@ -8,7 +8,7 @@ from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
 
 if TYPE_CHECKING:
-    from playwright.sync_api import Locator
+    from playwright.sync_api import FrameLocator, Locator, Page
     from screenpy import Actor
 
 
@@ -82,7 +82,7 @@ class Target:
             msg = f"{self} does not have a locator set."
             raise TargetingError(msg)
 
-        frame = browse_the_web.current_page
+        frame: Page | FrameLocator = browse_the_web.current_page
         for frame_locator in self.frame_path:
             frame = frame.frame_locator(frame_locator)
 

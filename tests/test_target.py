@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from unittest import mock
 
 import pytest
-from unittest import mock
 
 from screenpy_playwright import BrowseTheWebSynchronously, Target, TargetingError
 
