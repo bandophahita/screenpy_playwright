@@ -27,3 +27,9 @@ Open
 
 .. autoclass:: Open
     :members:
+
+SaveScreenshot
+--------------
+
+.. autoclass:: SaveScreenshot
+    :members:

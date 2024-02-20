@@ -5,7 +5,13 @@ from unittest import mock
 import pytest
 from screenpy import Actor, Describable, Performable, UnableToAct
 
-from screenpy_playwright import BrowseTheWebSynchronously, Click, Enter, Visit
+from screenpy_playwright import (
+    BrowseTheWebSynchronously,
+    Click,
+    Enter,
+    SaveScreenshot,
+    Visit,
+)
 
 from .useful_mocks import get_mocked_target_and_element
 
@@ -139,3 +145,68 @@ class TestVisit:
         mock_page.goto.assert_called_once_with(url)
         assert mock_ability.current_page == mock_page
         assert mock_page in mock_ability.pages
+
+
+class TestSaveScreenshot:
+
+    class_path = "screenpy_playwright.actions.save_screenshot"
+
+    def test_can_be_instantiated(self) -> None:
+        ss1 = SaveScreenshot("./screenshot.png")
+        ss2 = SaveScreenshot.as_("./screenshot.png")
+        ss3 = SaveScreenshot.as_("./screenshot.png").and_attach_it()
+        ss4 = SaveScreenshot.as_("./a_witch.png").and_attach_it(me="newt")
+
+        assert isinstance(ss1, SaveScreenshot)
+        assert isinstance(ss2, SaveScreenshot)
+        assert isinstance(ss3, SaveScreenshot)
+        assert isinstance(ss4, SaveScreenshot)
+
+    def test_implements_protocol(self) -> None:
+        ss = SaveScreenshot("./screenshot.png")
+
+        assert isinstance(ss, Describable)
+        assert isinstance(ss, Performable)
+
+    def test_filepath_vs_filename(self) -> None:
+        test_name = "mmcmanus.png"
+        test_path = f"boondock/saints/{test_name}"
+
+        ss = SaveScreenshot.as_(test_path)
+
+        assert ss.path == test_path
+        assert ss.filename == test_name
+
+    @mock.patch(f"{class_path}.AttachTheFile", autospec=True)
+    def test_perform_sends_kwargs_to_attach(
+        self, mocked_attachthefile: mock.Mock, Tester: Actor
+    ) -> None:
+        test_path = "souiiie.png"
+        test_kwargs = {"color": "Red", "weather": "Tornado"}
+        current_page = mock.Mock()
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.pages.append(current_page)
+        btws.current_page = current_page
+
+        with mock.patch(f"{self.class_path}.Path") as mocked_path:
+            SaveScreenshot(test_path).and_attach_it(**test_kwargs).perform_as(Tester)
+
+        mocked_attachthefile.assert_called_once_with(test_path, **test_kwargs)
+        mocked_path().write.assert_called_once()
+
+    def test_describe(self) -> None:
+        assert SaveScreenshot("pth").describe() == "Save screenshot as pth"
+
+    def test_subclass(self) -> None:
+        """test code for mypy to scan without issue"""
+
+        class SubSaveScreenshot(SaveScreenshot):
+            pass
+
+        sss1 = SubSaveScreenshot("./screenshot.png")
+        sss2 = SubSaveScreenshot.as_("./screenshot.png")
+        sss3 = SubSaveScreenshot.as_("./screenshot.png").and_attach_it()
+
+        assert isinstance(sss1, SubSaveScreenshot)
+        assert isinstance(sss2, SubSaveScreenshot)
+        assert isinstance(sss3, SubSaveScreenshot)
