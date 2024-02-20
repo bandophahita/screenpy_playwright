@@ -10,6 +10,7 @@ from .exceptions import TargetingError
 if TYPE_CHECKING:
     from playwright.sync_api import Locator
     from screenpy import Actor
+    from typing_extensions import Self
 
 
 class Target:
@@ -31,10 +32,10 @@ class Target:
     locator: str | None
     _description: str | None
 
-    @staticmethod
-    def the(name: str) -> Target:
+    @classmethod
+    def the(cls: type[Self], name: str) -> Self:
         """Provide a human-readable description of the target."""
-        return Target(name)
+        return cls(name)
 
     def located_by(self, locator: str) -> Target:
         """Provide the Playwright locator which describes the element."""

@@ -7,50 +7,47 @@ from screenpy import Actor, Describable, Performable, UnableToAct
 
 from screenpy_playwright import BrowseTheWebSynchronously, Click, Enter, Visit
 
-from .useful_mocks import get_mocked_target_and_element
+from .useful_mocks import get_mock_target_class, get_mocked_target_and_locator
+
+FakeTarget = get_mock_target_class()
+TARGET = FakeTarget()
 
 
 class TestClick:
     def test_can_be_instantiated(self) -> None:
-        target, _ = get_mocked_target_and_element()
-
-        c1 = Click(target)
-        c2 = Click.on_the(target)
+        c1 = Click(TARGET)
+        c2 = Click.on_the(TARGET)
 
         assert isinstance(c1, Click)
         assert isinstance(c2, Click)
 
     def test_implements_protocol(self) -> None:
-        target, _ = get_mocked_target_and_element()
-
-        c = Click(target)
+        c = Click(TARGET)
 
         assert isinstance(c, Describable)
         assert isinstance(c, Performable)
 
     def test_describe(self) -> None:
-        target, _ = get_mocked_target_and_element()
+        target = FakeTarget()
         target._description = "The Holy Hand Grenade"
 
         assert Click(target).describe() == f"Click on the {target}."
 
     def test_perform_click(self, Tester: Actor) -> None:
-        target, element = get_mocked_target_and_element()
+        target, locator = get_mocked_target_and_locator()
 
         Click.on_the(target).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        element.click.assert_called_once()
+        locator.click.assert_called_once()
 
 
 class TestEnter:
     def test_can_be_instantiated(self) -> None:
-        target, _ = get_mocked_target_and_element()
-
         e1 = Enter("")
         e2 = Enter.the_text("")
         e3 = Enter.the_secret("")
-        e4 = Enter.the_text("").into_the(target)
+        e4 = Enter.the_text("").into_the(TARGET)
 
         assert isinstance(e1, Enter)
         assert isinstance(e2, Enter)
@@ -64,7 +61,7 @@ class TestEnter:
         assert isinstance(e, Performable)
 
     def test_describe(self) -> None:
-        target, _ = get_mocked_target_and_element()
+        target = FakeTarget()
         target._description = "Sir Robin ran away away, brave brave Sir Robin!"
         text = "Sir Robin ran away!"
 
@@ -83,13 +80,13 @@ class TestEnter:
             Enter.the_text("").perform_as(Tester)
 
     def test_perform_enter(self, Tester: Actor) -> None:
-        target, element = get_mocked_target_and_element()
+        target, locator = get_mocked_target_and_locator()
         text = "I wanna be, the very best."
 
         Enter.the_text(text).into_the(target).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        element.fill.assert_called_once_with(text)
+        locator.fill.assert_called_once_with(text)
 
 
 class TestVisit:
