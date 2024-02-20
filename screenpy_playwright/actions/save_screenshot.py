@@ -74,7 +74,7 @@ class SaveScreenshot:
         attached for :external+screenpy:ref:`Narration`.
 
         Args:
-            **kwargs: keyword arguments for the adapters used by the narrator.
+            kwargs: keyword arguments for the adapters used by the narrator.
 
         Returns:
             Self
