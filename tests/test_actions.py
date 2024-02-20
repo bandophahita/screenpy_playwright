@@ -139,11 +139,11 @@ class TestSaveScreenshot:
         btws.pages.append(current_page)
         btws.current_page = current_page
 
-        with mock.patch(f"{self.class_path}.Path") as mocked_path:
+        with mock.patch(f"{self.class_path}.Path", autospec=True) as mocked_path:
             SaveScreenshot(test_path).and_attach_it(**test_kwargs).perform_as(Tester)
 
         mocked_attachthefile.assert_called_once_with(test_path, **test_kwargs)
-        mocked_path().write_bytes.assert_called_once()
+        mocked_path(test_path).write_bytes.assert_called_once()
 
     def test_describe(self) -> None:
         assert SaveScreenshot("pth").describe() == "Save screenshot as pth"
