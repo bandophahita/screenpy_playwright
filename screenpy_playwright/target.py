@@ -8,7 +8,7 @@ from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
 
 if TYPE_CHECKING:
-    from playwright.sync_api import Locator
+    from playwright.sync_api import FrameLocator, Locator, Page
     from screenpy import Actor
 
 
@@ -29,6 +29,7 @@ class Target:
     """
 
     locator: str | None
+    frame_path: list[str]
     _description: str | None
 
     @staticmethod
@@ -39,6 +40,11 @@ class Target:
     def located_by(self, locator: str) -> Target:
         """Provide the Playwright locator which describes the element."""
         self.locator = locator
+        return self
+
+    def in_frame(self, frame_locator: str) -> Target:
+        """Provide the Playwright locator which describes the frame."""
+        self.frame_path.append(frame_locator)
         return self
 
     @property
@@ -76,7 +82,11 @@ class Target:
             msg = f"{self} does not have a locator set."
             raise TargetingError(msg)
 
-        return browse_the_web.current_page.locator(self.locator)
+        frame: Page | FrameLocator = browse_the_web.current_page
+        for frame_locator in self.frame_path:
+            frame = frame.frame_locator(frame_locator)
+
+        return frame.locator(self.locator)
 
     def __repr__(self) -> str:
         """Get a human-readable representation of this Target.
@@ -89,3 +99,4 @@ class Target:
     def __init__(self, name: str | None = None) -> None:
         self._description = name
         self.locator = None
+        self.frame_path = []
