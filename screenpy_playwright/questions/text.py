@@ -35,7 +35,7 @@ class Text:
         return Text(target)
 
     def describe(self) -> str:
-        """Describe the Question.
+        """Describe the Question in the present tense.
 
         Returns:
             A description of this Question.
