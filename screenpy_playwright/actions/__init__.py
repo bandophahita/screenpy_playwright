@@ -3,6 +3,7 @@
 from .click import Click
 from .enter import Enter
 from .open import Open
+from .save_screenshot import SaveScreenshot
 
 # Natural-language-enabling syntactic sugar
 Visit = Open
@@ -13,4 +14,5 @@ __all__ = [
     "Enter",
     "Open",
     "Visit",
+    "SaveScreenshot",
 ]
