@@ -56,3 +56,12 @@ class TestBrowseTheWebSynchronously:
         assert mock_playwright.chromium.launch.call_count == 1
         assert mock_playwright.firefox.launch.call_count == 1
         assert mock_playwright.webkit.launch.call_count == 1
+
+    def test_forget_does_not_clear_playwright(self) -> None:
+        mock_playwright, mock_browser = get_mocked_playwright_and_browser()
+        btws = BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
+
+        btws.forget()
+
+        assert BrowseTheWebSynchronously.playwright is mock_playwright
+        assert mock_browser.close.call_count == 1

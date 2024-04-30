@@ -7,13 +7,8 @@ from typing import TYPE_CHECKING
 from playwright.sync_api import sync_playwright
 
 if TYPE_CHECKING:
-    from typing import TypeVar
-
     from playwright.sync_api import Browser, BrowserContext, Page, Playwright
-
-    SelfBrowseTheWebSynchronously = TypeVar(
-        "SelfBrowseTheWebSynchronously", bound="BrowseTheWebSynchronously"
-    )
+    from typing_extensions import Self
 
 
 class BrowseTheWebSynchronously:
@@ -38,18 +33,18 @@ class BrowseTheWebSynchronously:
 
     @classmethod
     def using(
-        cls: type[SelfBrowseTheWebSynchronously],
+        cls,
         playwright: Playwright,
         browser: Browser | BrowserContext,
-    ) -> SelfBrowseTheWebSynchronously:
+    ) -> Self:
         """Supply a pre-defined Playwright browser to use."""
         cls.playwright = playwright
         return cls(browser)
 
     @classmethod
     def using_firefox(
-        cls: type[SelfBrowseTheWebSynchronously],
-    ) -> SelfBrowseTheWebSynchronously:
+        cls,
+    ) -> Self:
         """Use a synchronous Firefox browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
@@ -57,8 +52,8 @@ class BrowseTheWebSynchronously:
 
     @classmethod
     def using_chromium(
-        cls: type[SelfBrowseTheWebSynchronously],
-    ) -> SelfBrowseTheWebSynchronously:
+        cls,
+    ) -> Self:
         """Use a synchronous Chromium (i.e. Chrome, Edge, Opera, etc.) browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
@@ -66,22 +61,19 @@ class BrowseTheWebSynchronously:
 
     @classmethod
     def using_webkit(
-        cls: type[SelfBrowseTheWebSynchronously],
+        cls,
     ) -> BrowseTheWebSynchronously:
         """Use a synchronous WebKit (i.e. Safari, etc.) browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
         return cls(cls.playwright.webkit.launch())
 
-    def forget(self: SelfBrowseTheWebSynchronously) -> None:
+    def forget(self: Self) -> None:
         """Forget everything you knew about being a playwright."""
         self.browser.close()
-        if self.playwright:
-            self.playwright.stop()
-        self.__class__.playwright = None
 
     def __init__(
-        self: SelfBrowseTheWebSynchronously,
+        self,
         browser: Browser | BrowserContext,
     ) -> None:
         self.browser = browser
