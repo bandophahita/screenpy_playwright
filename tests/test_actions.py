@@ -10,6 +10,7 @@ from screenpy_playwright import (
     Click,
     Enter,
     SaveScreenshot,
+    Select,
     Visit,
 )
 
@@ -158,6 +159,46 @@ class TestSaveScreenshot:
         assert isinstance(sss1, SubSaveScreenshot)
         assert isinstance(sss2, SubSaveScreenshot)
         assert isinstance(sss3, SubSaveScreenshot)
+
+
+class TestSelect:
+    def test_can_be_instantiated(self) -> None:
+        s1 = Select("option")
+        s2 = Select.the_option("option")
+        s3 = Select.the_option("option").from_the(TARGET)
+
+        assert isinstance(s1, Select)
+        assert isinstance(s2, Select)
+        assert isinstance(s3, Select)
+
+    def test_implements_protocol(self) -> None:
+        s = Select("option")
+
+        assert isinstance(s, Describable)
+        assert isinstance(s, Performable)
+
+    def test_describe(self) -> None:
+        target = FakeTarget()
+        target._description = "The Holy Hand Grenade"
+        option = "option"
+        s1 = Select(option).from_the(target)
+        s2 = Select(option, option).from_the(target)
+
+        assert s1.describe() == f"Select '{option}' from the {target}."
+        assert s2.describe() == f"Select '{option}', '{option}' from the {target}."
+
+    def test_perform_select(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        option = "option"
+
+        Select(option).from_the(target).perform_as(Tester)
+
+        target.found_by.assert_called_once_with(Tester)
+        locator.select_option.assert_called_once_with((option,))
+
+    def test_raises_with_no_target(self, Tester: Actor) -> None:
+        with pytest.raises(UnableToAct):
+            Select("option").perform_as(Tester)
 
 
 class TestVisit:

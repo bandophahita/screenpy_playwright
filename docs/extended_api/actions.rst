@@ -14,11 +14,13 @@ Click
 .. autoclass:: Click
     :members:
 
+
 Enter
 -----
 
 .. autoclass:: Enter
     :members:
+
 
 Open
 ----
@@ -28,8 +30,17 @@ Open
 .. autoclass:: Open
     :members:
 
+
 SaveScreenshot
 --------------
 
 .. autoclass:: SaveScreenshot
     :members:
+
+
+Select
+------
+
+.. autoclass:: Select
+    :members:
+    :exclude-members: the_options, from_

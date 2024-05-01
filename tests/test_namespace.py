@@ -11,6 +11,7 @@ def test_screenpy_playwright() -> None:
         "Open",
         "PageObject",
         "SaveScreenshot",
+        "Select",
         "Target",
         "TargetingError",
         "Text",
@@ -32,6 +33,7 @@ def test_actions() -> None:
         "Enter",
         "Open",
         "SaveScreenshot",
+        "Select",
         "Visit",
     ]
     assert sorted(screenpy_playwright.actions.__all__) == sorted(expected)
