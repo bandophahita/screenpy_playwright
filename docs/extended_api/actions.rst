@@ -31,6 +31,13 @@ Open
     :members:
 
 
+RefreshThePage
+--------------
+
+.. autoclass:: RefreshThePage
+    :members:
+
+
 SaveScreenshot
 --------------
 

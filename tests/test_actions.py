@@ -9,6 +9,7 @@ from screenpy_playwright import (
     BrowseTheWebSynchronously,
     Click,
     Enter,
+    RefreshThePage,
     SaveScreenshot,
     Select,
     Visit,
@@ -94,6 +95,36 @@ class TestEnter:
 
         target.found_by.assert_called_once_with(Tester)
         locator.fill.assert_called_once_with(text)
+
+
+class TestRefreshThePage:
+    def test_can_be_instantiated(self) -> None:
+        r1 = RefreshThePage()
+
+        assert isinstance(r1, RefreshThePage)
+
+    def test_implements_protocol(self) -> None:
+        r = RefreshThePage()
+
+        assert isinstance(r, Describable)
+        assert isinstance(r, Performable)
+
+    def test_describe(self) -> None:
+        assert RefreshThePage().describe() == "Refresh the page."
+
+    def test_perform_refresh(self, Tester: Actor) -> None:
+        current_page = mock.Mock()
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.pages.append(current_page)
+        btws.current_page = current_page
+
+        RefreshThePage().perform_as(Tester)
+
+        current_page.reload.assert_called_once()
+
+    def test_raises_when_no_current_page(self, Tester: Actor) -> None:
+        with pytest.raises(UnableToAct, match="current page to refresh"):
+            RefreshThePage().perform_as(Tester)
 
 
 class TestSaveScreenshot:

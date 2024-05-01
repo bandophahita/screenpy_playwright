@@ -3,6 +3,7 @@
 from .click import Click
 from .enter import Enter
 from .open import Open
+from .refresh_the_page import RefreshThePage
 from .save_screenshot import SaveScreenshot
 from .select import Select
 
@@ -14,7 +15,8 @@ __all__ = [
     "Click",
     "Enter",
     "Open",
-    "Visit",
+    "RefreshThePage",
     "SaveScreenshot",
     "Select",
+    "Visit",
 ]

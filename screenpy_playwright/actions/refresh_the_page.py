@@ -1,0 +1,50 @@
+"""Refresh the page!"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal, NotRequired, TypedDict, Unpack
+
+from screenpy import UnableToAct, beat
+
+from screenpy_playwright.abilities import BrowseTheWebSynchronously
+
+if TYPE_CHECKING:
+
+    from screenpy import Actor
+
+    class ReloadTypes(TypedDict):
+        """Types that can be passed to Playwright's Page.reload."""
+
+        timeout: NotRequired[float | None]
+        wait_until: NotRequired[
+            Literal["commit", "domcontentloaded", "load", "networkidle"] | None
+        ]
+
+
+class RefreshThePage:
+    """Refresh the current page in the browser.
+
+    Examples:
+        the_actor.attempts_to(RefreshThePage())
+    """
+
+    def __init__(self, **kwargs: Unpack[ReloadTypes]) -> None:
+        """Initialize the action."""
+        self.kwargs = kwargs
+
+    def describe(self) -> str:
+        """Describe the Action in present tense."""
+        return "Refresh the page."
+
+    @beat("{} refreshes the page.")
+    def perform_as(self, the_actor: Actor) -> None:
+        """Direct the Actor to refresh the page."""
+        page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
+        if page is None:
+            msg = (
+                "Actor does not have a current page to refresh."
+                " Did you forget to `Open` a page?"
+            )
+            raise UnableToAct(msg)
+
+        page.reload(**self.kwargs)
