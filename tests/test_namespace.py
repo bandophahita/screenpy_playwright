@@ -7,6 +7,7 @@ def test_screenpy_playwright() -> None:
         "BrowserURL",
         "BrowseTheWebSynchronously",
         "Click",
+        "Element",
         "Enter",
         "Number",
         "Open",
@@ -46,6 +47,7 @@ def test_questions() -> None:
     expected = [
         "Attribute",
         "BrowserURL",
+        "Element",
         "Number",
         "Text",
     ]

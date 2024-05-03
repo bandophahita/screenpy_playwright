@@ -9,6 +9,7 @@ from screenpy_playwright import (
     Attribute,
     BrowserURL,
     BrowseTheWebSynchronously,
+    Element,
     Number,
     Text,
 )
@@ -79,6 +80,29 @@ class TestBrowserURL:
     def test_raises_error_if_no_page(self, Tester: Actor) -> None:
         with pytest.raises(UnableToAnswer):
             BrowserURL().answered_by(Tester)
+
+
+class TestElement:
+    def test_can_be_instantiated(self) -> None:
+        e = Element(TARGET)
+
+        assert isinstance(e, Element)
+
+    def test_implements_protocol(self) -> None:
+        e = Element(TARGET)
+
+        assert isinstance(e, Answerable)
+        assert isinstance(e, Describable)
+
+    def test_describe(self) -> None:
+        assert Element(TARGET).describe() == f"The {TARGET} element."
+
+    def test_ask_for_element(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        actual_answer = Element(target).answered_by(Tester)
+
+        target.found_by.assert_called_once_with(Tester)
+        assert actual_answer == locator
 
 
 class TestNumber:

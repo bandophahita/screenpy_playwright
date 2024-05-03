@@ -20,6 +20,13 @@ BrowserURL
     :members:
 
 
+Element
+-------
+
+.. autoclass:: Element
+    :members:
+
+
 Number
 ------
 
