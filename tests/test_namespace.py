@@ -4,6 +4,7 @@ import screenpy_playwright
 def test_screenpy_playwright() -> None:
     expected = [
         "Attribute",
+        "BrowserURL",
         "BrowseTheWebSynchronously",
         "Click",
         "Enter",
@@ -44,6 +45,7 @@ def test_actions() -> None:
 def test_questions() -> None:
     expected = [
         "Attribute",
+        "BrowserURL",
         "Number",
         "Text",
     ]
