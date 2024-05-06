@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, NotRequired, TypedDict, Unpack
+from typing import TYPE_CHECKING, Literal, TypedDict
 
 from screenpy import UnableToAct, beat
 
 from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 if TYPE_CHECKING:
-
     from screenpy import Actor
+    from typing_extensions import NotRequired, Unpack
 
     class ReloadTypes(TypedDict):
         """Types that can be passed to Playwright's Page.reload."""

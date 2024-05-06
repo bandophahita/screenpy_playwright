@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, NotRequired, Self, Sequence, TypedDict, Unpack
+from typing import TYPE_CHECKING, Sequence, TypedDict
 
 from screenpy import UnableToAct, beat
 
 if TYPE_CHECKING:
     from playwright.sync_api import ElementHandle
     from screenpy import Actor
+    from typing_extensions import NotRequired, Self, Unpack
 
     from screenpy_playwright import Target
 
