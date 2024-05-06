@@ -12,7 +12,7 @@ the Playwright browser automation tool.
 :license: MIT, see LICENSE for more details.
 """
 
-from . import abilities, actions, questions
+from . import abilities, actions, questions, resolutions
 from .abilities import *  # noqa: F403
 from .actions import *  # noqa: F403
 from .exceptions import TargetingError
