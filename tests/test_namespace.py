@@ -9,6 +9,7 @@ def test_screenpy_playwright() -> None:
         "Click",
         "Element",
         "Enter",
+        "IsVisible",
         "Number",
         "Open",
         "PageObject",
@@ -18,6 +19,7 @@ def test_screenpy_playwright() -> None:
         "Target",
         "TargetingError",
         "Text",
+        "Visible",
         "Visit",
     ]
     assert sorted(screenpy_playwright.__all__) == sorted(expected)
@@ -52,3 +54,11 @@ def test_questions() -> None:
         "Text",
     ]
     assert sorted(screenpy_playwright.questions.__all__) == sorted(expected)
+
+
+def test_resolutions() -> None:
+    expected = [
+        "IsVisible",
+        "Visible",
+    ]
+    assert sorted(screenpy_playwright.resolutions.__all__) == sorted(expected)

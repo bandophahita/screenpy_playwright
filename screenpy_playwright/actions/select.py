@@ -56,7 +56,7 @@ class Select:
         method in Playwright.
 
         Aliases:
-            - the_options
+            - ``the_options``
         """
         return cls(*args, **kwargs)
 
@@ -74,7 +74,7 @@ class Select:
         """Specify the dropdown or multi-select field to select from.
 
         Aliases:
-            - from_
+            - ``from_``
         """
         self.target = target
         return self

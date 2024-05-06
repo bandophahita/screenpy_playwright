@@ -18,8 +18,9 @@ from .actions import *  # noqa: F403
 from .exceptions import TargetingError
 from .protocols import PageObject
 from .questions import *  # noqa: F403
+from .resolutions import *  # noqa: F403
 from .target import Target
 
 __all__ = ["Target", "TargetingError", "PageObject"]
 
-__all__ += abilities.__all__ + actions.__all__ + questions.__all__
+__all__ += abilities.__all__ + actions.__all__ + questions.__all__ + resolutions.__all__
