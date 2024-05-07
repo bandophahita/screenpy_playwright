@@ -6,13 +6,13 @@ ScreenPy Playwright: A ScreenPy Extension
 =========================================
 
 Not sure what ScreenPy is?
-Check out `ScreenPy's documentation <https://screenpy-docs.readthedocs.io/en/latest/>`__ first!
+Check out `ScreenPy's documentation <https://screenpy-docs.readthedocs.io/en/latest/>`_ first!
 
 ``screenpy_playwright`` extends ScreenPy
 by providing an Ability,
 Actions,
 and Questions
-which interact with `Playwright <https://playwright.dev/>`__.
+which interact with `Playwright <https://playwright.dev/>`_.
 This enables your Actors
 to :class:`~screenpy_playwright.abilities.BrowseTheWebSynchronously`!
 
