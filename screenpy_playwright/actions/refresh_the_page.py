@@ -28,6 +28,8 @@ class RefreshThePage:
         the_actor.attempts_to(RefreshThePage())
     """
 
+    kwargs: ReloadTypes
+
     def __init__(self, **kwargs: Unpack[ReloadTypes]) -> None:
         """Initialize the action."""
         self.kwargs = kwargs

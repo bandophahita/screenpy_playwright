@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from screenpy.pacing import beat
 
@@ -11,8 +11,18 @@ from ..abilities import BrowseTheWebSynchronously
 
 if TYPE_CHECKING:
     from screenpy import Actor
+    from typing_extensions import Literal, NotRequired, Unpack
 
     from ..protocols import PageObject
+
+    class OpenTypes(TypedDict):
+        """Types that can be passed to Playwright's Page.goto method."""
+
+        timeout: NotRequired[float | None]
+        wait_until: NotRequired[
+            Literal["commit", "domcontentloaded", "load", "networkidle"] | None
+        ]
+        referer: NotRequired[str | None]
 
 
 class Open:
@@ -35,6 +45,8 @@ class Open:
         the_actor.attempts_to(Open("https://www.nintendo.com/"))
     """
 
+    kwargs: OpenTypes
+
     def describe(self) -> str:
         """Describe the Action in present tense."""
         return f"Visit {self.url}"
@@ -44,11 +56,13 @@ class Open:
         """Direct the actor to Open a webpage."""
         browse_the_web = the_actor.ability_to(BrowseTheWebSynchronously)
         page = browse_the_web.browser.new_page()
-        page.goto(self.url)
+        page.goto(self.url, **self.kwargs)
         browse_the_web.current_page = page
         browse_the_web.pages.append(page)
 
-    def __init__(self, location: str | PageObject) -> None:
+    def __init__(self, location: str | PageObject, **kwargs: Unpack[OpenTypes]) -> None:
         url = getattr(location, "url", location)
         url = f'{os.getenv("BASE_URL", "")}{url}'
+
         self.url = url
+        self.kwargs = kwargs

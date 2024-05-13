@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from screenpy_playwright import Target
 
     class SelectTypes(TypedDict):
-        """Types that can be passed to Playwright's Locator.select_option."""
+        """Types that can be passed to Playwright's Locator.select_option method."""
 
         index: NotRequired[int | Sequence[int] | None]
         label: NotRequired[str | Sequence[str] | None]
@@ -47,6 +47,8 @@ class Select:
     """
 
     target: Target | None
+    args: tuple[str, ...]
+    kwargs: SelectTypes
 
     @classmethod
     def the_option(cls, *args: str, **kwargs: Unpack[SelectTypes]) -> Self:

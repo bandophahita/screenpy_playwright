@@ -44,10 +44,10 @@ class TestClick:
     def test_perform_click(self, Tester: Actor) -> None:
         target, locator = get_mocked_target_and_locator()
 
-        Click.on_the(target).perform_as(Tester)
+        Click(target, delay=0.5).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        locator.click.assert_called_once()
+        locator.click.assert_called_once_with(delay=0.5)
 
 
 class TestEnter:
@@ -91,10 +91,10 @@ class TestEnter:
         target, locator = get_mocked_target_and_locator()
         text = "I wanna be, the very best."
 
-        Enter.the_text(text).into_the(target).perform_as(Tester)
+        Enter(text, force=True).into_the(target).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        locator.fill.assert_called_once_with(text)
+        locator.fill.assert_called_once_with(text, force=True)
 
 
 class TestRefreshThePage:
@@ -118,9 +118,9 @@ class TestRefreshThePage:
         btws.pages.append(current_page)
         btws.current_page = current_page
 
-        RefreshThePage().perform_as(Tester)
+        RefreshThePage(timeout=20).perform_as(Tester)
 
-        current_page.reload.assert_called_once()
+        current_page.reload.assert_called_once_with(timeout=20)
 
     def test_raises_when_no_current_page(self, Tester: Actor) -> None:
         with pytest.raises(UnableToAct, match="current page to refresh"):
@@ -222,10 +222,10 @@ class TestSelect:
         target, locator = get_mocked_target_and_locator()
         option = "option"
 
-        Select(option).from_the(target).perform_as(Tester)
+        Select(option, no_wait_after=True).from_the(target).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        locator.select_option.assert_called_once_with((option,))
+        locator.select_option.assert_called_once_with((option,), no_wait_after=True)
 
     def test_raises_with_no_target(self, Tester: Actor) -> None:
         with pytest.raises(UnableToAct):
@@ -271,11 +271,11 @@ class TestVisit:
         mock_ability = Tester.ability_to(BrowseTheWebSynchronously)
         mock_browser = mock_ability.browser
 
-        Visit(url).perform_as(Tester)
+        Visit(url, wait_until="commit").perform_as(Tester)
 
         mock_new_page_func = cast(mock.Mock, mock_browser.new_page)
         mock_new_page_func.assert_called_once()
         mock_page = mock_new_page_func.return_value
-        mock_page.goto.assert_called_once_with(url)
+        mock_page.goto.assert_called_once_with(url, wait_until="commit")
         assert mock_ability.current_page == mock_page
         assert mock_page in mock_ability.pages
