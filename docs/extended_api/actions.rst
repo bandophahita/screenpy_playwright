@@ -45,6 +45,13 @@ SaveScreenshot
     :members:
 
 
+Scroll
+------
+
+.. autoclass:: Scroll
+    :members:
+
+
 Select
 ------
 

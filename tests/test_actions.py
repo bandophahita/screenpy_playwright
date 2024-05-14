@@ -11,6 +11,7 @@ from screenpy_playwright import (
     Enter,
     RefreshThePage,
     SaveScreenshot,
+    Scroll,
     Select,
     Visit,
 )
@@ -186,6 +187,62 @@ class TestSaveScreenshot:
         assert isinstance(sss1, SubSaveScreenshot)
         assert isinstance(sss2, SubSaveScreenshot)
         assert isinstance(sss3, SubSaveScreenshot)
+
+
+class TestScroll:
+    def test_can_be_instantiated(self) -> None:
+        s1 = Scroll(100, 200)
+        s2 = Scroll.up(100)
+        s3 = Scroll.down(100)
+        s4 = Scroll.left(100)
+        s5 = Scroll.right(100)
+
+        assert isinstance(s1, Scroll)
+        assert isinstance(s2, Scroll)
+        assert isinstance(s3, Scroll)
+        assert isinstance(s4, Scroll)
+        assert isinstance(s5, Scroll)
+
+    def test_implements_protocol(self) -> None:
+        s = Scroll(100, 200)
+
+        assert isinstance(s, Describable)
+        assert isinstance(s, Performable)
+
+    @pytest.mark.parametrize(
+        ("delta_x", "delta_y", "expected"),
+        [
+            (100, 200, "100 pixels right and 200 pixels down"),
+            (-100, -200, "100 pixels left and 200 pixels up"),
+            (0, 200, "200 pixels down"),
+            (100, 0, "100 pixels right"),
+            (0, 0, "nowhere"),
+        ],
+    )
+    def test_describe(self, delta_x: int, delta_y: int, expected: str) -> None:
+        assert Scroll(delta_x, delta_y).describe() == f"Scroll the page {expected}."
+
+    def test_scroll_fixes_direction(self) -> None:
+        test_num = 100
+        s_up = Scroll.up(test_num)
+        s_down = Scroll.down(-test_num)
+        s_left = Scroll.left(test_num)
+        s_right = Scroll.right(-test_num)
+
+        assert s_up.delta_y == -test_num
+        assert s_down.delta_y == test_num
+        assert s_left.delta_x == -test_num
+        assert s_right.delta_x == test_num
+
+    def test_perform_scroll(self, Tester: Actor) -> None:
+        current_page = mock.Mock()
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.pages.append(current_page)
+        btws.current_page = current_page
+
+        Scroll(1337, -9001).perform_as(Tester)
+
+        current_page.mouse.wheel.assert_called_once_with(delta_x=1337, delta_y=-9001)
 
 
 class TestSelect:

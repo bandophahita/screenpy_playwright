@@ -9,7 +9,7 @@ from screenpy.pacing import beat
 if TYPE_CHECKING:
     from playwright.sync_api import Position
     from screenpy import Actor
-    from typing_extensions import Literal, NotRequired, Unpack
+    from typing_extensions import Literal, NotRequired, Self, Unpack
 
     from ..target import Target
 
@@ -44,10 +44,10 @@ class Click:
 
     kwargs: ClickTypes
 
-    @staticmethod
-    def on_the(target: Target, **kwargs: Unpack[ClickTypes]) -> Click:
+    @classmethod
+    def on_the(cls, target: Target, **kwargs: Unpack[ClickTypes]) -> Self:
         """Specify the element on which to click."""
-        return Click(target, **kwargs)
+        return cls(target, **kwargs)
 
     def describe(self) -> str:
         """Describe the Action in present tense."""

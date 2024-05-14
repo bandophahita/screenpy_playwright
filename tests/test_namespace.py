@@ -16,6 +16,7 @@ def test_screenpy_playwright() -> None:
         "PageObject",
         "RefreshThePage",
         "SaveScreenshot",
+        "Scroll",
         "Select",
         "Target",
         "TargetingError",
@@ -40,6 +41,7 @@ def test_actions() -> None:
         "Open",
         "RefreshThePage",
         "SaveScreenshot",
+        "Scroll",
         "Select",
         "Visit",
     ]

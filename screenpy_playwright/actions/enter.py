@@ -9,7 +9,7 @@ from screenpy.pacing import beat
 
 if TYPE_CHECKING:
     from screenpy import Actor
-    from typing_extensions import NotRequired, Unpack
+    from typing_extensions import NotRequired, Self, Unpack
 
     from ..target import Target
 
@@ -40,18 +40,18 @@ class Enter:
 
     target: Target | None
 
-    @staticmethod
-    def the_text(text: str, **kwargs: Unpack[EnterTypes]) -> Enter:
+    @classmethod
+    def the_text(cls, text: str, **kwargs: Unpack[EnterTypes]) -> Self:
         """Provide the text to enter into the field."""
-        return Enter(text, **kwargs)
+        return cls(text, **kwargs)
 
-    @staticmethod
-    def the_secret(text: str, **kwargs: Unpack[EnterTypes]) -> Enter:
+    @classmethod
+    def the_secret(cls, text: str, **kwargs: Unpack[EnterTypes]) -> Self:
         """Provide the **secret** text to enter into the field.
 
         The text will be masked, and appear as "[CENSORED]" in logs.
         """
-        return Enter(text, mask=True, **kwargs)
+        return cls(text, mask=True, **kwargs)
 
     the_password = the_secret
 
