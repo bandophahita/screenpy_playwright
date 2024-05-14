@@ -77,10 +77,6 @@ class TestBrowserURL:
 
         assert BrowserURL().answered_by(Tester) == url
 
-    def test_raises_error_if_no_page(self, Tester: Actor) -> None:
-        with pytest.raises(UnableToAnswer):
-            BrowserURL().answered_by(Tester)
-
 
 class TestElement:
     def test_can_be_instantiated(self) -> None:

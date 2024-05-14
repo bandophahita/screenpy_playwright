@@ -122,10 +122,6 @@ class TestRefreshThePage:
 
         current_page.reload.assert_called_once_with(timeout=20)
 
-    def test_raises_when_no_current_page(self, Tester: Actor) -> None:
-        with pytest.raises(UnableToAct, match="current page to refresh"):
-            RefreshThePage().perform_as(Tester)
-
 
 class TestSaveScreenshot:
 

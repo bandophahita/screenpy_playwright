@@ -76,9 +76,7 @@ class Target:
             The Locator which describes the element.
         """
         browse_the_web = the_actor.ability_to(BrowseTheWebSynchronously)
-        if browse_the_web.current_page is None:
-            msg = f"There is no active page! {the_actor} cannot find the {self}."
-            raise TargetingError(msg)
+
         if self.locator is None:
             msg = f"{self} does not have a locator set."
             raise TargetingError(msg)

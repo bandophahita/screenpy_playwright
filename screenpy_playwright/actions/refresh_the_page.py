@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypedDict
 
-from screenpy import UnableToAct, beat
+from screenpy import beat
 
 from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
@@ -42,11 +42,4 @@ class RefreshThePage:
     def perform_as(self, the_actor: Actor) -> None:
         """Direct the Actor to refresh the page."""
         page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
-        if page is None:
-            msg = (
-                "Actor does not have a current page to refresh."
-                " Did you forget to `Open` a page?"
-            )
-            raise UnableToAct(msg)
-
         page.reload(**self.kwargs)

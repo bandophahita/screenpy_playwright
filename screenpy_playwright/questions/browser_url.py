@@ -1,6 +1,6 @@
 """Ask about the current browser URL."""
 
-from screenpy import Actor, UnableToAnswer, beat
+from screenpy import Actor, beat
 
 from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
@@ -23,12 +23,6 @@ class BrowserURL:
     def answered_by(self, the_actor: Actor) -> str:
         """Ask the Actor about the current browser URL."""
         page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
-        if page is None:
-            msg = (
-                "Actor does not have a current page from which to get the URL."
-                " Did you forget to `Open` a page?"
-            )
-            raise UnableToAnswer(msg)
 
         # On single-page applications, after clicking an element which redirects
         # the user, the browser URL is not immediately updated in Playwright.

@@ -10,6 +10,7 @@ def test_screenpy_playwright() -> None:
         "Element",
         "Enter",
         "IsVisible",
+        "NoPageError",
         "Number",
         "Open",
         "PageObject",
