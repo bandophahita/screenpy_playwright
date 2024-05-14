@@ -24,6 +24,9 @@ class Scroll:
     (You may also use the directional classmethods, which make sure the number
     is on the correct side of zero (and may be easier to read!).)
 
+    Abilities Required:
+        :class:`~screenpy_playwright.abilities.BrowseTheWebSynchronously`
+
     Examples::
 
         the_actor.attempts_to(Scroll(delta_x=-20, delta_y=1200))

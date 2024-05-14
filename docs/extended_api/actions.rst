@@ -13,6 +13,7 @@ Click
 
 .. autoclass:: Click
     :members:
+    :exclude-members: on
 
 
 Enter
@@ -20,6 +21,7 @@ Enter
 
 .. autoclass:: Enter
     :members:
+    :exclude-members: into, the_password
 
 
 Open
@@ -43,6 +45,7 @@ SaveScreenshot
 
 .. autoclass:: SaveScreenshot
     :members:
+    :exclude-members: and_attach_it_with
 
 
 Scroll
@@ -50,6 +53,7 @@ Scroll
 
 .. autoclass:: Scroll
     :members:
+    :exclude-members: direction_to_log
 
 
 Select

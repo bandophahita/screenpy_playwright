@@ -27,6 +27,9 @@ if TYPE_CHECKING:
 class Select:
     """Select an option from a dropdown or multi-select field.
 
+    Abilities Required:
+        :class:`~screenpy_playwright.abilities.BrowseTheWebSynchronously`
+
     Examples::
 
         the_actor.attempts_to(

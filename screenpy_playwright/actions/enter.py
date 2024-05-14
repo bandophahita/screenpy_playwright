@@ -50,13 +50,20 @@ class Enter:
         """Provide the **secret** text to enter into the field.
 
         The text will be masked, and appear as "[CENSORED]" in logs.
+
+        Aliases:
+            - ``the_password``
         """
         return cls(text, mask=True, **kwargs)
 
     the_password = the_secret
 
     def into_the(self, target: Target, **kwargs: Unpack[EnterTypes]) -> Enter:
-        """Target the element to enter text into."""
+        """Target the element to enter text into.
+
+        Aliases:
+            - ``into``
+        """
         self.target = target
         self.kwargs.update(kwargs)
         return self

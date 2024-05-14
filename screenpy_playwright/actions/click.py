@@ -46,8 +46,14 @@ class Click:
 
     @classmethod
     def on_the(cls, target: Target, **kwargs: Unpack[ClickTypes]) -> Self:
-        """Specify the element on which to click."""
+        """Specify the element on which to click.
+
+        Aliases:
+            - ``on``
+        """
         return cls(target, **kwargs)
+
+    on = on_the
 
     def describe(self) -> str:
         """Describe the Action in present tense."""

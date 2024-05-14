@@ -61,9 +61,6 @@ class SaveScreenshot:
 
         Args:
             path: The filepath for the screenshot, including its name.
-
-        Returns:
-            Self
         """
         return cls(path=path)
 
@@ -73,11 +70,11 @@ class SaveScreenshot:
         This method accepts any additional keywords needed by any adapters
         attached for :external+screenpy:ref:`Narration`.
 
+        Aliases:
+            - ``and_attach_it_with``
+
         Args:
             kwargs: keyword arguments for the adapters used by the narrator.
-
-        Returns:
-            Self
         """
         self.attach_kwargs = kwargs
         return self
@@ -86,11 +83,7 @@ class SaveScreenshot:
 
     @beat("{} saves a screenshot as {filename}")
     def perform_as(self, the_actor: Actor) -> None:
-        """Direct the actor to save a screenshot.
-
-        Args:
-            the_actor: The actor who will perform this Action.
-        """
+        """Direct the actor to save a screenshot."""
         current_page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
         if current_page is None:
             msg = "No page has been opened! Cannot save a screenshot."

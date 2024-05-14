@@ -24,6 +24,9 @@ if TYPE_CHECKING:
 class RefreshThePage:
     """Refresh the current page in the browser.
 
+    Abilities Required:
+        :class:`~screenpy_playwright.abilities.BrowseTheWebSynchronously`
+
     Examples:
         the_actor.attempts_to(RefreshThePage())
     """
