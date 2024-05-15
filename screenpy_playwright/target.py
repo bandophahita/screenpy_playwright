@@ -161,16 +161,14 @@ class Target:
         Returns:
             The Locator which describes the element.
         """
-        browse_the_web = the_actor.ability_to(BrowseTheWebSynchronously)
-        if browse_the_web.current_page is None:
-            msg = f"There is no active page! {the_actor} cannot find the {self}."
-            raise TargetingError(msg)
+        page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
+
         if not self.manipulations:
             msg = f"{self} does not have any locator strategy set."
             raise TargetingError(msg)
 
         # Start with a base locator to ease typing. :face_rolling_eyes:
-        locator = browse_the_web.current_page.locator("html")
+        locator = page.locator("html")
         for manipulation in self.manipulations:
             if manipulation.args is None and manipulation.kwargs is None:
                 locator = getattr(locator, manipulation.name)

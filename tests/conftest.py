@@ -14,7 +14,7 @@ def Tester() -> AnActor:
     """Provide an Actor with mocked web browsing abilities."""
     BrowseTheWeb_Mocked = mock.Mock(spec=BrowseTheWebSynchronously)
     BrowseTheWeb_Mocked.pages = []
-    BrowseTheWeb_Mocked.current_page = None
+    BrowseTheWeb_Mocked._current_page = None
     BrowseTheWeb_Mocked.browser = mock.Mock(spec=Browser)
 
     return AnActor.named("Tester").who_can(BrowseTheWeb_Mocked)

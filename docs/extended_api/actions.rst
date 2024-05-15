@@ -13,12 +13,16 @@ Click
 
 .. autoclass:: Click
     :members:
+    :exclude-members: on
+
 
 Enter
 -----
 
 .. autoclass:: Enter
     :members:
+    :exclude-members: into, the_password
+
 
 Open
 ----
@@ -28,8 +32,33 @@ Open
 .. autoclass:: Open
     :members:
 
+
+RefreshThePage
+--------------
+
+.. autoclass:: RefreshThePage
+    :members:
+
+
 SaveScreenshot
 --------------
 
 .. autoclass:: SaveScreenshot
     :members:
+    :exclude-members: and_attach_it_with
+
+
+Scroll
+------
+
+.. autoclass:: Scroll
+    :members:
+    :exclude-members: direction_to_log
+
+
+Select
+------
+
+.. autoclass:: Select
+    :members:
+    :exclude-members: the_options, from_

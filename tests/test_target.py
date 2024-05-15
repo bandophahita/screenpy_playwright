@@ -136,7 +136,7 @@ class TestTarget:
         test_name = "John Cleese"
 
         with pytest.raises(TargetingError) as excinfo:
-            Target.the(test_name).located_by("*").found_by(Tester)
+            Target.the(test_name).found_by(Tester)
 
         assert test_name in str(excinfo.value)
 

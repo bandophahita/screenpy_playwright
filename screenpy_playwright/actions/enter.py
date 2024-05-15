@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from screenpy.exceptions import UnableToAct
 from screenpy.pacing import beat
 
 if TYPE_CHECKING:
     from screenpy import Actor
+    from typing_extensions import NotRequired, Self, Unpack
 
     from ..target import Target
+
+    class EnterTypes(TypedDict):
+        """Types that can be passed to Playwright's ElementHandle.fill method."""
+
+        timeout: NotRequired[float | None]
+        no_wait_after: NotRequired[bool | None]
+        force: NotRequired[bool | None]
 
 
 class Enter:
@@ -23,6 +31,8 @@ class Enter:
 
         the_actor.attempts_to(Enter("Hello!").into_the(GREETING_INPUT))
 
+        the_actor.attempts_to(Enter("Hello!", force=True).into_the(GREETING_INPUT))
+
         the_actor.attempts_to(Enter.the_text("eggs").into_the(GROCERY_FIELD))
 
         the_actor.attempts_to(Enter.the_secret("12345").into_the(PASSWORD_FIELD))
@@ -30,51 +40,38 @@ class Enter:
 
     target: Target | None
 
-    @staticmethod
-    def the_text(text: str) -> Enter:
-        """Provide the text to enter into the field.
+    @classmethod
+    def the_text(cls, text: str, **kwargs: Unpack[EnterTypes]) -> Self:
+        """Provide the text to enter into the field."""
+        return cls(text, **kwargs)
 
-        Args:
-            text: the text to enter into the field.
+    @classmethod
+    def the_secret(cls, text: str, **kwargs: Unpack[EnterTypes]) -> Self:
+        """Provide the **secret** text to enter into the field.
 
-        Returns:
-            A new instance of Enter, with mask et to False.
+        The text will be masked, and appear as "[CENSORED]" in logs.
+
+        Aliases:
+            - ``the_password``
         """
-        return Enter(text)
-
-    @staticmethod
-    def the_secret(text: str) -> Enter:
-        """Provide the SECRET text to enter into the field.
-
-        The text will be masked, and appear as "[CENSORED]".
-
-        Returns:
-            A new instance of Enter, with mask set to True.
-        """
-        return Enter(text, mask=True)
+        return cls(text, mask=True, **kwargs)
 
     the_password = the_secret
 
-    def into_the(self, target: Target) -> Enter:
+    def into_the(self, target: Target, **kwargs: Unpack[EnterTypes]) -> Enter:
         """Target the element to enter text into.
 
-        Args:
-            target: the Target which describes the element to enter text into.
-
-        Returns:
-            self
+        Aliases:
+            - ``into``
         """
         self.target = target
+        self.kwargs.update(kwargs)
         return self
 
     into = into_the
 
     def describe(self) -> str:
-        """Describe the Action in present tense.
-
-        Returns:
-            A description of this Action.
-        """
+        """Describe the Action in present tense."""
         return f'Enter "{self.text_to_log}" into the {self.target}.'
 
     @beat('{} enters "{text_to_log}" into the {target}.')
@@ -87,11 +84,14 @@ class Enter:
             )
             raise UnableToAct(msg)
 
-        self.target.found_by(the_actor).fill(self.text)
+        self.target.found_by(the_actor).fill(self.text, **self.kwargs)
 
-    def __init__(self, text: str, *, mask: bool = False) -> None:
+    def __init__(
+        self, text: str, *, mask: bool = False, **kwargs: Unpack[EnterTypes]
+    ) -> None:
         self.text = text
         self.target = None
+        self.kwargs = kwargs
 
         if mask:
             self.text_to_log = "[CENSORED]"

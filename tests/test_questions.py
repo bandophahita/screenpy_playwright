@@ -5,7 +5,14 @@ from unittest import mock
 import pytest
 from screenpy import Actor, Answerable, Describable, UnableToAnswer
 
-from screenpy_playwright import Attribute, BrowseTheWebSynchronously, Number, Text
+from screenpy_playwright import (
+    Attribute,
+    BrowserURL,
+    BrowseTheWebSynchronously,
+    Element,
+    Number,
+    Text,
+)
 
 from .useful_mocks import get_mock_target_class, get_mocked_target_and_locator
 
@@ -45,6 +52,53 @@ class TestAttribute:
 
     def test_describe(self) -> None:
         assert Attribute("foo").describe() == 'The "foo" attribute of the None.'
+
+
+class TestBrowserURL:
+    def test_can_be_instantiated(self) -> None:
+        burl = BrowserURL()
+
+        assert isinstance(burl, BrowserURL)
+
+    def test_implements_protocol(self) -> None:
+        burl = BrowserURL()
+
+        assert isinstance(burl, Answerable)
+        assert isinstance(burl, Describable)
+
+    def test_describe(self) -> None:
+        assert BrowserURL().describe() == "The current browser URL."
+
+    def test_ask_browser_url(self, Tester: Actor) -> None:
+        url = "https://www.nintendo.com"
+        mocked_btws = Tester.ability_to(BrowseTheWebSynchronously)
+        mocked_btws.current_page = mock.Mock()
+        mocked_btws.current_page.url = url
+
+        assert BrowserURL().answered_by(Tester) == url
+
+
+class TestElement:
+    def test_can_be_instantiated(self) -> None:
+        e = Element(TARGET)
+
+        assert isinstance(e, Element)
+
+    def test_implements_protocol(self) -> None:
+        e = Element(TARGET)
+
+        assert isinstance(e, Answerable)
+        assert isinstance(e, Describable)
+
+    def test_describe(self) -> None:
+        assert Element(TARGET).describe() == f"The {TARGET} element."
+
+    def test_ask_for_element(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        actual_answer = Element(target).answered_by(Tester)
+
+        target.found_by.assert_called_once_with(Tester)
+        assert actual_answer == locator
 
 
 class TestNumber:
