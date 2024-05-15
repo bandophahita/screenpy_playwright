@@ -11,6 +11,9 @@ see ScreenPy's :external+screenpy:ref:`actions api` reference.
 Click
 -----
 
+**Aliases:**
+``Clicks``
+
 .. autoclass:: Click
     :members:
     :exclude-members: on
@@ -18,6 +21,9 @@ Click
 
 Enter
 -----
+
+**Aliases:**
+``Enters``
 
 .. autoclass:: Enter
     :members:
@@ -27,7 +33,12 @@ Enter
 Open
 ----
 
-**Aliases:** ``Visit``
+**Aliases:**
+``GoTo``,
+``GoesTo``,
+``Opens``,
+``Visit``
+``Visits``,
 
 .. autoclass:: Open
     :members:
@@ -36,12 +47,22 @@ Open
 RefreshThePage
 --------------
 
+**Aliases:**
+``RefreshesThePage``,
+``Refresh``,
+``Refreshes``
+
 .. autoclass:: RefreshThePage
     :members:
 
 
 SaveScreenshot
 --------------
+
+**Aliases:**
+``SavesScreenshot``,
+``SaveAScreenshot``,
+``SavesAScreenshot``,
 
 .. autoclass:: SaveScreenshot
     :members:
@@ -51,6 +72,9 @@ SaveScreenshot
 Scroll
 ------
 
+**Aliases:**
+``Scrolls``
+
 .. autoclass:: Scroll
     :members:
     :exclude-members: direction_to_log
@@ -58,6 +82,9 @@ Scroll
 
 Select
 ------
+
+**Aliases:**
+``Selects``
 
 .. autoclass:: Select
     :members:
