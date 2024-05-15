@@ -1,13 +1,13 @@
 Release History
 ===============
 
-0.0.3 (2024-05-15)
+0.0.4 (2024-05-15)
 ------------------
 
 ### New Features
 
-- Added several new Actions: `RefreshThePage`, `Scroll`, `Select`, `SaveScreenshot`
-- Added several new Questions: `Attribute`, `BrowserURL`, `Element`
+- Added several new Actions: `RefreshThePage`, `Scroll`, `Select`
+- Added two new Questions: `BrowserURL`, `Element`
 - Added a new Resolution: `IsVisible`
 - Added several aliases for the existing Actions, Questions, and Resolutions.
 - `Target` now also fully supports all Playwright locator methods.
@@ -15,6 +15,16 @@ Release History
 ### Bug fixes
 
 - Enabled multiple Actors to be able to `exit` without breaking Playwright for each other.
+
+
+0.0.3 (2024-02-21)
+------------------
+
+### New Features
+
+- Added new Action: ``SaveScreenshot``
+- Added new Question: ``Attribute``
+- `Target` can now find things in iframes!
 
 ## Development Niceties
 
