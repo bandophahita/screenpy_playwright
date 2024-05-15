@@ -9,13 +9,8 @@ from playwright.sync_api import sync_playwright
 from ..exceptions import NoPageError
 
 if TYPE_CHECKING:
-    from typing import TypeVar
-
     from playwright.sync_api import Browser, BrowserContext, Page, Playwright
-
-    SelfBrowseTheWebSynchronously = TypeVar(
-        "SelfBrowseTheWebSynchronously", bound="BrowseTheWebSynchronously"
-    )
+    from typing_extensions import Self
 
 
 class BrowseTheWebSynchronously:
@@ -39,37 +34,27 @@ class BrowseTheWebSynchronously:
     pages: list[Page]
 
     @classmethod
-    def using(
-        cls: type[SelfBrowseTheWebSynchronously],
-        playwright: Playwright,
-        browser: Browser | BrowserContext,
-    ) -> SelfBrowseTheWebSynchronously:
+    def using(cls, playwright: Playwright, browser: Browser | BrowserContext) -> Self:
         """Supply a pre-defined Playwright browser to use."""
         cls.playwright = playwright
         return cls(browser)
 
     @classmethod
-    def using_firefox(
-        cls: type[SelfBrowseTheWebSynchronously],
-    ) -> SelfBrowseTheWebSynchronously:
+    def using_firefox(cls) -> Self:
         """Use a synchronous Firefox browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
         return cls(cls.playwright.firefox.launch())
 
     @classmethod
-    def using_chromium(
-        cls: type[SelfBrowseTheWebSynchronously],
-    ) -> SelfBrowseTheWebSynchronously:
+    def using_chromium(cls) -> Self:
         """Use a synchronous Chromium (i.e. Chrome, Edge, Opera, etc.) browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
         return cls(cls.playwright.chromium.launch())
 
     @classmethod
-    def using_webkit(
-        cls: type[SelfBrowseTheWebSynchronously],
-    ) -> BrowseTheWebSynchronously:
+    def using_webkit(cls) -> Self:
         """Use a synchronous WebKit (i.e. Safari, etc.) browser."""
         if cls.playwright is None:
             cls.playwright = sync_playwright().start()
@@ -92,17 +77,11 @@ class BrowseTheWebSynchronously:
         """Set the current page."""
         self._current_page = page
 
-    def forget(self: SelfBrowseTheWebSynchronously) -> None:
+    def forget(self) -> None:
         """Forget everything you knew about being a playwright."""
         self.browser.close()
-        if self.playwright:
-            self.playwright.stop()
-        self.__class__.playwright = None
 
-    def __init__(
-        self: SelfBrowseTheWebSynchronously,
-        browser: Browser | BrowserContext,
-    ) -> None:
+    def __init__(self, browser: Browser | BrowserContext) -> None:
         self.browser = browser
         self._current_page = None
         self.pages = []

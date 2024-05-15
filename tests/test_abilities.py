@@ -63,3 +63,12 @@ class TestBrowseTheWebSynchronously:
         with pytest.raises(NoPageError):
             # accessing the attribute will raise if it's None
             BrowseTheWebSynchronously(browser).current_page  # noqa: B018
+
+    def test_forget_does_not_clear_playwright(self) -> None:
+        mock_playwright, mock_browser = get_mocked_playwright_and_browser()
+        btws = BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
+
+        btws.forget()
+
+        assert BrowseTheWebSynchronously.playwright is mock_playwright
+        assert mock_browser.close.call_count == 1
