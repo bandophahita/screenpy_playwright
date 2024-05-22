@@ -1,6 +1,15 @@
 Release History
 ===============
 
+0.0.5 (2024-05-22)
+------------------
+
+### Bug Fixes
+
+- Fixed typing errors with `Enter.the_password`.
+- Fixed typing errors with `Target`, or more specifically with `_Manipulation`, or even more specifically with specifying the types of the `args` and `kwargs` which are passed on to Playwright's API.
+
+
 0.0.4 (2024-05-15)
 ------------------
 
