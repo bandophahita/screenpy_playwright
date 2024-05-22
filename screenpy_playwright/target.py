@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import UserString
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Pattern, TypedDict
+from typing import TYPE_CHECKING, Pattern, Tuple, TypedDict, Union
 
 from playwright.sync_api import Locator
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from screenpy import Actor
     from typing_extensions import NotRequired, Self, Unpack
 
-    _ManipulationArgsType = tuple[str | int | None, ...]
+    _ManipulationArgsType = Tuple[Union[str, int, None], ...]
 
     class _ManipulationKwargsType(TypedDict):
         """Types for kwargs that are passed to Playwright's locator methods."""
