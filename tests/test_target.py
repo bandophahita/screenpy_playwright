@@ -11,14 +11,24 @@ from screenpy_playwright.target import _Manipulation
 if TYPE_CHECKING:
     from screenpy import Actor
 
+    from screenpy_playwright.target import (
+        _ManipulationArgsType,
+        _ManipulationKwargsType,
+    )
+
 
 class Test_Manipulations:
     def test_proper_display(self) -> None:
         name = "viking"
-        args = ("spam", "eggs")
-        kwargs = {"sausage": "spam"}
-        args_str = "'spam', 'eggs'"
-        kwargs_str = "sausage='spam'"
+        args: _ManipulationArgsType = ("spam", "eggs", 1, None)
+        kwargs: _ManipulationKwargsType = {
+            "has_text": "spam",
+            "exact": True,
+            "include_hidden": None,
+            "level": 1,
+        }
+        args_str = "'spam', 'eggs', 1, None"
+        kwargs_str = "has_text='spam', exact=True, include_hidden=None, level=1"
 
         m_for_attribute = _Manipulation(Target(), name)
         m_with_neither = _Manipulation(Target(), name, (), {})
@@ -46,12 +56,14 @@ class TestTarget:
         t3 = Target("test")
         t4 = Target().located_by("test")
         t5 = Target()
+        t6 = Target("test").get_by_label("test", exact=True)
 
         assert isinstance(t1, Target)
         assert isinstance(t2, Target)
         assert isinstance(t3, Target)
         assert isinstance(t4, Target)
         assert isinstance(t5, Target)
+        assert isinstance(t6, Target)
 
     def test_auto_describe(self) -> None:
         t1 = Target().located_by("#yellow")
@@ -96,29 +108,33 @@ class TestTarget:
 
     # list from https://playwright.dev/python/docs/locators
     @pytest.mark.parametrize(
-        "strategy",
+        ("strategy", "args", "kwargs"),
         [
-            "get_by_role",
-            "get_by_text",
-            "get_by_label",
-            "get_by_placeholder",
-            "get_by_alt_text",
-            "get_by_title",
-            "get_by_test_id",
+            ("get_by_role", ("button",), {}),
+            ("get_by_text", ("Log In",), {"exact": True}),
+            ("get_by_label", ("spam",), {"level": 1, "exact": None}),
+            ("get_by_placeholder", ("eggs",), {}),
+            ("get_by_alt_text", ("sausage",), {}),
+            ("get_by_title", ("baked beans",), {}),
+            ("get_by_test_id", ("spam",), {}),
+            ("nth", (1,), {}),
         ],
     )
     def test_found_by_with_playwright_strategies(
-        self, Tester: Actor, strategy: str
+        self,
+        Tester: Actor,
+        strategy: str,
+        args: _ManipulationArgsType,
+        kwargs: _ManipulationKwargsType,
     ) -> None:
-        test_value = "Eeuugh!"
         mocked_btws = Tester.ability_to(BrowseTheWebSynchronously)
         mocked_btws.current_page = mock.Mock()
 
         target = Target.the("test")
-        getattr(target, strategy)(test_value).found_by(Tester)
+        getattr(target, strategy)(*args, **kwargs).found_by(Tester)
 
         func = getattr(mocked_btws.current_page.locator("html"), strategy)
-        func.assert_called_once_with(test_value)
+        func.assert_called_once_with(*args, **kwargs)
 
     def test_found_by_chain(self, Tester: Actor) -> None:
         test_locator = "#spam>baked-beans>eggs>sausage+spam"

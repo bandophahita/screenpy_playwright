@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import UserString
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Pattern, TypedDict
 
 from playwright.sync_api import Locator
 
@@ -13,7 +13,26 @@ from .exceptions import TargetingError
 
 if TYPE_CHECKING:
     from screenpy import Actor
-    from typing_extensions import Self
+    from typing_extensions import NotRequired, Self, Unpack
+
+    _ManipulationArgsType = tuple[str | int | None, ...]
+
+    class _ManipulationKwargsType(TypedDict):
+        """Types that can be passed to Playwright's Locator or FrameLocator."""
+
+        has_text: NotRequired[str | Pattern[str] | None]
+        has_not_text: NotRequired[str | Pattern[str] | None]
+        has: NotRequired[Locator | None]
+        has_not: NotRequired[Locator | None]
+        exact: NotRequired[bool | None]
+        checked: NotRequired[bool | None]
+        disabled: NotRequired[bool | None]
+        expanded: NotRequired[bool | None]
+        include_hidden: NotRequired[bool | None]
+        level: NotRequired[int | None]
+        name: NotRequired[str | Pattern[str] | None]
+        pressed: NotRequired[bool | None]
+        selected: NotRequired[bool | None]
 
 
 @dataclass
@@ -29,8 +48,8 @@ class _Manipulation(UserString):
 
     target: Target
     name: str
-    args: tuple | None = None
-    kwargs: dict | None = None
+    args: _ManipulationArgsType | None = None
+    kwargs: _ManipulationKwargsType | None = None
 
     def __hash__(self) -> int:
         """Appear as the name, in case this is an attribute and not a method."""
@@ -44,7 +63,11 @@ class _Manipulation(UserString):
         """Defer back to the Target for unknown attributes."""
         return getattr(self.target, name)
 
-    def __call__(self, *args: str, **kwargs: str) -> Target:
+    def __call__(
+        self,
+        *args: Unpack[_ManipulationArgsType],
+        **kwargs: Unpack[_ManipulationKwargsType],
+    ) -> Target:
         """Add args and kwargs to the manipulation."""
         self.args = args
         self.kwargs = kwargs
@@ -90,7 +113,7 @@ class Target:
         )
 
         # Using Playwright strategies directly
-        Target().frame_locator("#todoframe").get_by_label("todo")
+        Target("To-Do list").frame_locator("#todoframe").get_by_label("todo")
     """
 
     manipulations: list[_Manipulation]
