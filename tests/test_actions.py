@@ -57,11 +57,13 @@ class TestEnter:
         e2 = Enter.the_text("")
         e3 = Enter.the_secret("")
         e4 = Enter.the_text("").into_the(TARGET)
+        e5 = Enter.the_password("").into_the(TARGET)
 
         assert isinstance(e1, Enter)
         assert isinstance(e2, Enter)
         assert isinstance(e3, Enter)
         assert isinstance(e4, Enter)
+        assert isinstance(e5, Enter)
 
     def test_implements_protocol(self) -> None:
         e = Enter("")
