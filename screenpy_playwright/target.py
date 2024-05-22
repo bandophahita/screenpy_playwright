@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     _ManipulationArgsType = tuple[str | int | None, ...]
 
     class _ManipulationKwargsType(TypedDict):
-        """Types that can be passed to Playwright's Locator or FrameLocator."""
+        """Types for kwargs that are passed to Playwright's locator methods."""
 
         has_text: NotRequired[str | Pattern[str] | None]
         has_not_text: NotRequired[str | Pattern[str] | None]
