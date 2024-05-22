@@ -56,7 +56,10 @@ class Enter:
         """
         return cls(text, mask=True, **kwargs)
 
-    the_password = the_secret
+    @classmethod
+    def the_password(cls, text: str, **kwargs: Unpack[EnterTypes]) -> Self:
+        """Alias for ``the_secret``, recreated for mypy."""
+        return cls.the_secret(text, **kwargs)
 
     def into_the(self, target: Target, **kwargs: Unpack[EnterTypes]) -> Enter:
         """Target the element to enter text into.
