@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 class IsVisibleElement(BaseMatcher[Optional[Locator]]):
-    """Matches an element whose ``is_visible`` method returns True."""
+    """Match a locator whose ``is_visible`` method returns True."""
 
     def _matches(self, item: Locator | None) -> bool:
         if item is None:
@@ -44,5 +44,5 @@ class IsVisibleElement(BaseMatcher[Optional[Locator]]):
 
 
 def is_visible_element() -> IsVisibleElement:
-    """This matcher matches any element that is visible."""
+    """Match any locator whose described element is visible."""
     return IsVisibleElement()

@@ -11,14 +11,18 @@ def test_screenpy_playwright() -> None:
         "Element",
         "Enter",
         "Enters",
+        "Exist",
+        "Exists",
         "GoesTo",
         "GoTo",
+        "IsPresent",
         "IsVisible",
         "NoPageError",
         "Number",
         "Open",
         "Opens",
         "PageObject",
+        "Present",
         "RefreshesThePage",
         "RefreshThePage",
         "SaveAScreenshot",
@@ -95,7 +99,11 @@ def test_questions() -> None:
 
 def test_resolutions() -> None:
     expected = [
+        "Exist",
+        "Exists",
+        "IsPresent",
         "IsVisible",
+        "Present",
         "Visible",
     ]
     assert sorted(screenpy_playwright.resolutions.__all__) == sorted(expected)
