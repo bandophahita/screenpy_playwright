@@ -88,6 +88,17 @@ class TestTarget:
         with pytest.raises(TargetingError):
             Target("is having a FIRE sale! Oh god!! Help!!!").click()
 
+    def test_dunders_are_accessible(self) -> None:
+        target = Target("Dunder Mifflin, this is Pam.")
+        redirected_target = Target().get_by_label("Dunder Mifflin, Jim speaking.")
+        manipulation = Target().first
+
+        # dir accesses __dict__ behind the scenes
+        # (and is how this issue was found)
+        dir(target)
+        dir(redirected_target)
+        dir(manipulation)
+
     def test_found_by(self, Tester: Actor) -> None:
         test_locator = "#spam>baked-beans>eggs>sausage+spam"
         mocked_btws = Tester.ability_to(BrowseTheWebSynchronously)

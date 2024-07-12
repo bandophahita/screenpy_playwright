@@ -148,7 +148,7 @@ class Target(Locator):
 
     def __getattribute__(self, name: str) -> _Manipulation:
         """Convert a Playwright Locator strategy into a Manipulation."""
-        if hasattr(Locator, name):
+        if not name.startswith("_") and hasattr(Locator, name):
             attr = getattr(Locator, name)
             is_property = type(attr) is property
             r_type = getattr(attr, "__annotations__", {}).get("return")
