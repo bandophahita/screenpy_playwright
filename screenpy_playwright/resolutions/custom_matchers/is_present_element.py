@@ -26,8 +26,8 @@ class IsPresentElement(BaseMatcher[Optional[Locator]]):
         return item.count() > 0
 
     def describe_to(self, description: Description) -> None:
-        """Describe the passing case."""
-        description.append_text("the element is present")
+        """Describe what is needed to pass this test."""
+        description.append_text("an element which is present")
 
     def describe_match(self, _: Locator | None, match_description: Description) -> None:
         """Describe the matching case."""
