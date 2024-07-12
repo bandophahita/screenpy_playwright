@@ -36,11 +36,11 @@ class Test_Manipulations:
         m_with_args_but_no_kwargs = _Manipulation(Target(), name, args=args)
         m_with_no_args_but_kwargs = _Manipulation(Target(), name, kwargs=kwargs)
 
-        assert repr(m_for_attribute) == name
-        assert repr(m_with_neither) == f"{name}()"
-        assert repr(m_with_both) == f"{name}({args_str}, {kwargs_str})"
-        assert repr(m_with_args_but_no_kwargs) == f"{name}({args_str})"
-        assert repr(m_with_no_args_but_kwargs) == f"{name}({kwargs_str})"
+        assert m_for_attribute.get_locator() == name
+        assert m_with_neither.get_locator() == f"{name}()"
+        assert m_with_both.get_locator() == f"{name}({args_str}, {kwargs_str})"
+        assert m_with_args_but_no_kwargs.get_locator() == f"{name}({args_str})"
+        assert m_with_no_args_but_kwargs.get_locator() == f"{name}({kwargs_str})"
 
     def test_defers_to_target_for_unknown_attributes(self) -> None:
         target = Target.the("spam")
@@ -71,12 +71,22 @@ class TestTarget:
         t3 = Target()
         t4 = Target("").get_by_label("baz")
         t5 = Target().located_by("foo").get_by_label("bar").first
+        t6 = Target("a dead parrot").last
 
         assert t1.target_name == "locator('#yellow')"
         assert t2.target_name == "favorite color"
         assert t3.target_name == "None"
         assert t4.target_name == "get_by_label('baz')"
         assert t5.target_name == "locator('foo').get_by_label('bar').first"
+        assert t6.target_name == "a dead parrot"
+
+    def test_invalid_method_raises(self) -> None:
+        with pytest.raises(AttributeError):
+            Target("acquired").not_a_real_method()
+
+    def test_method_too_soon_raises(self) -> None:
+        with pytest.raises(TargetingError):
+            Target("is having a FIRE sale! Oh god!! Help!!!").click()
 
     def test_found_by(self, Tester: Actor) -> None:
         test_locator = "#spam>baked-beans>eggs>sausage+spam"
@@ -141,11 +151,8 @@ class TestTarget:
         mocked_btws = Tester.ability_to(BrowseTheWebSynchronously)
         mocked_btws.current_page = mock.Mock()
 
-        manipulation = Target.the("test").located_by(test_locator).first
-        # mypy thinks this will be a Target. It will not be.
-        target = manipulation.get_by_label("foo")  # type: ignore[operator]
+        target = Target.the("test").located_by(test_locator).first.get_by_label("foo")
 
-        assert isinstance(manipulation, _Manipulation)
         assert isinstance(target, Target)
 
     def test_found_by_raises_if_no_locator(self, Tester: Actor) -> None:
