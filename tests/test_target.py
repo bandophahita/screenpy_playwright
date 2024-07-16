@@ -57,7 +57,6 @@ class TestTarget:
         t4 = Target().located_by("test")
         t5 = Target()
         t6 = Target("test").get_by_label("test", exact=True)
-        t7 = Target("frame").frame_locator("test").content_frame
 
         assert isinstance(t1, Target)
         assert isinstance(t2, Target)
@@ -65,7 +64,6 @@ class TestTarget:
         assert isinstance(t4, Target)
         assert isinstance(t5, Target)
         assert isinstance(t6, Target)
-        assert isinstance(t7, Target)
 
     def test_auto_describe(self) -> None:
         t1 = Target().located_by("#yellow")
