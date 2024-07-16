@@ -123,6 +123,9 @@ split-on-trailing-comma = false
     "PLR",  # likewise using specific numbers and strings in tests.
 ]
 "__version__.py" = ["D"]
+"*.pyi" = [
+    "PLR0913",  # it's not our fault they have too many parameters!
+]
 
 
 ################################################################################

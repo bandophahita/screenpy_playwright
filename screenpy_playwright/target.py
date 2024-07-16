@@ -6,7 +6,7 @@ from collections import UserString
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Pattern, Tuple, TypedDict, Union
 
-from playwright.sync_api import Locator
+from playwright.sync_api import FrameLocator, Locator
 
 from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
@@ -44,6 +44,10 @@ class _Manipulation(UserString):
     This class allows the ScreenPy Playwright Target to behave just like a
     Playwright Locator, which has a robust, chainable API for describing
     elements.
+
+    This approach necessary because Locators are built from a Page base. We
+    don't have a Page to build from until the Actor is provided during the
+    :meth:`Target.found_by` call.
     """
 
     target: Target
@@ -73,7 +77,7 @@ class _Manipulation(UserString):
         self.kwargs = kwargs
         return self.target
 
-    def __repr__(self) -> str:
+    def get_locator(self) -> str:
         """Reconstruct the locator function/attribute string."""
         args = kwargs = left_paren = right_paren = comma = ""
         if self.args is not None or self.kwargs is not None:
@@ -87,11 +91,15 @@ class _Manipulation(UserString):
             comma = ", "
         return f"{self.name}{left_paren}{args}{comma}{kwargs}{right_paren}"
 
+    def __repr__(self) -> str:
+        """Return the Target for representation."""
+        return repr(self.target)
+
     # make sure we handle str here as well
     __str__ = __repr__
 
 
-class Target:
+class Target(Locator, FrameLocator):
     """A described element on a webpage.
 
     Uses Playwright's Locator API to describe an element on a webpage, with a
@@ -138,15 +146,26 @@ class Target:
         )
         return self
 
-    def __getattr__(self, name: str) -> _Manipulation:
+    def __getattribute__(self, name: str) -> _Manipulation:
         """Convert a Playwright Locator strategy into a Manipulation."""
-        if not hasattr(Locator, name):
-            msg = f"'{name}' is not a valid Playwright Locator strategy."
-            raise AttributeError(msg)
+        is_private = name.startswith("_")
+        superclass_has_attr = hasattr(Locator, name) or hasattr(FrameLocator, name)
+        if not is_private and superclass_has_attr:
+            attr = getattr(Locator, name) or getattr(FrameLocator, name)
+            is_property = type(attr) is property
+            r_type = getattr(attr, "__annotations__", {}).get("return")
+            is_right_type = r_type is Locator or r_type is FrameLocator
+            is_right_str = r_type in ["Locator", "FrameLocator"]
 
-        manipulation = _Manipulation(self, name)
-        self.manipulations.append(manipulation)
-        return manipulation
+            if is_property or is_right_type or is_right_str:
+                manipulation = _Manipulation(self, name)
+                self.manipulations.append(manipulation)
+                return manipulation
+
+            msg = f"'{name}' cannot be accessed until `found_by` is called."
+            raise TargetingError(msg)
+
+        return super().__getattribute__(name)
 
     @property
     def target_name(self) -> str:
@@ -161,7 +180,7 @@ class Target:
         if self._description:
             target_name = self._description
         elif self.manipulations:
-            target_name = ".".join(map(repr, self.manipulations))
+            target_name = ".".join(m.get_locator() for m in self.manipulations)
         else:
             target_name = "None"
         return target_name
@@ -196,9 +215,17 @@ class Target:
             if manipulation.args is None and manipulation.kwargs is None:
                 locator = getattr(locator, manipulation.name)
             else:
-                locator = getattr(locator, manipulation.name)(
-                    *manipulation.args, **manipulation.kwargs
-                )
+                args = []
+                for arg in manipulation.args:
+                    arg_to_append = arg
+                    if isinstance(arg, Target):
+                        arg_to_append = arg.found_by(the_actor)
+                    args.append(arg_to_append)
+                kwargs = {
+                    k: v.found_by(the_actor) if isinstance(v, Target) else v
+                    for k, v in manipulation.kwargs.items()
+                }
+                locator = getattr(locator, manipulation.name)(*args, **kwargs)
 
         return locator
 
