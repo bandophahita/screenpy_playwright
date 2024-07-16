@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence, TypedDict
 
-from screenpy import UnableToAct, beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import DeliveryError, UnableToAct, beat
 
 if TYPE_CHECKING:
     from playwright.sync_api import ElementHandle
@@ -106,4 +107,11 @@ class Select:
             )
             raise UnableToAct(msg)
 
-        self.target.found_by(the_actor).select_option(self.args, **self.kwargs)
+        try:
+            self.target.found_by(the_actor).select_option(self.args, **self.kwargs)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to select "
+                f"{self.target}: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e

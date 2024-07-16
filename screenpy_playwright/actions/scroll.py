@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from screenpy import beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import DeliveryError, beat
 
 from ..abilities import BrowseTheWebSynchronously
 
@@ -100,4 +101,11 @@ class Scroll:
     def perform_as(self, the_actor: Actor) -> None:
         """Direct the Actor to scroll the page."""
         page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
-        page.mouse.wheel(delta_x=self.delta_x, delta_y=self.delta_y)
+        try:
+            page.mouse.wheel(delta_x=self.delta_x, delta_y=self.delta_y)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to scroll "
+                f"{self.direction_to_log}: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e

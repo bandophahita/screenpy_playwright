@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence, TypedDict
 
-from screenpy.pacing import beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import DeliveryError, beat
 
 if TYPE_CHECKING:
     from playwright.sync_api import Position
@@ -62,7 +63,14 @@ class Click:
     @beat("{} clicks on the {target}.")
     def perform_as(self, the_actor: Actor) -> None:
         """Direct the Actor to click on the element."""
-        self.target.found_by(the_actor).click(**self.kwargs)
+        try:
+            self.target.found_by(the_actor).click(**self.kwargs)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to click "
+                f"{self.target}: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e
 
     def __init__(self, target: Target, **kwargs: Unpack[ClickTypes]) -> None:
         self.target = target

@@ -6,7 +6,8 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from screenpy import AttachTheFile, UnableToAct, beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import AttachTheFile, DeliveryError, UnableToAct, beat
 
 from ..abilities import BrowseTheWebSynchronously
 
@@ -88,8 +89,15 @@ class SaveScreenshot:
         if current_page is None:
             msg = "No page has been opened! Cannot save a screenshot."
             raise UnableToAct(msg)
+        try:
+            screenshot = current_page.screenshot(path=self.path)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to "
+                f"save a screenshot: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e
 
-        screenshot = current_page.screenshot(path=self.path)
         Path(self.path).write_bytes(screenshot)
 
         if self.attach_kwargs is not None:
