@@ -3,7 +3,8 @@ from typing import cast
 from unittest import mock
 
 import pytest
-from screenpy import Actor, Describable, Performable, UnableToAct
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import Actor, DeliveryError, Describable, Performable, UnableToAct
 
 from screenpy_playwright import (
     BrowseTheWebSynchronously,
@@ -49,6 +50,13 @@ class TestClick:
 
         target.found_by.assert_called_once_with(Tester)
         locator.click.assert_called_once_with(delay=0.5)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        locator.click.side_effect = PlaywrightError("I have no more pens.")
+
+        with pytest.raises(DeliveryError):
+            Click(target).perform_as(Tester)
 
 
 class TestEnter:
@@ -99,6 +107,13 @@ class TestEnter:
         target.found_by.assert_called_once_with(Tester)
         locator.fill.assert_called_once_with(text, force=True)
 
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        locator.fill.side_effect = PlaywrightError("I have no more ink.")
+
+        with pytest.raises(DeliveryError):
+            Enter("quietly").into_the(target).perform_as(Tester)
+
 
 class TestRefreshThePage:
     def test_can_be_instantiated(self) -> None:
@@ -124,6 +139,15 @@ class TestRefreshThePage:
         RefreshThePage(timeout=20).perform_as(Tester)
 
         current_page.reload.assert_called_once_with(timeout=20)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        page = cast(
+            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+        )
+        page.reload.side_effect = PlaywrightError("I have no more paper.")
+
+        with pytest.raises(DeliveryError):
+            RefreshThePage().perform_as(Tester)
 
 
 class TestSaveScreenshot:
@@ -190,6 +214,15 @@ class TestSaveScreenshot:
         assert isinstance(sss2, SubSaveScreenshot)
         assert isinstance(sss3, SubSaveScreenshot)
 
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        page = cast(
+            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+        )
+        page.screenshot.side_effect = PlaywrightError("I have no camera.")
+
+        with pytest.raises(DeliveryError):
+            SaveScreenshot("./screenshot.png").perform_as(Tester)
+
 
 class TestScroll:
     def test_can_be_instantiated(self) -> None:
@@ -246,6 +279,15 @@ class TestScroll:
 
         current_page.mouse.wheel.assert_called_once_with(delta_x=1337, delta_y=-9001)
 
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        page = cast(
+            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+        )
+        page.mouse.wheel.side_effect = PlaywrightError("I have no legs.")
+
+        with pytest.raises(DeliveryError):
+            Scroll(1337, -9001).perform_as(Tester)
+
 
 class TestSelect:
     def test_can_be_instantiated(self) -> None:
@@ -285,6 +327,13 @@ class TestSelect:
     def test_raises_with_no_target(self, Tester: Actor) -> None:
         with pytest.raises(UnableToAct):
             Select("option").perform_as(Tester)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        locator.select_option.side_effect = PlaywrightError("I have no opinions.")
+
+        with pytest.raises(DeliveryError):
+            Select("option").from_the(target).perform_as(Tester)
 
 
 class TestVisit:
@@ -334,3 +383,11 @@ class TestVisit:
         mock_page.goto.assert_called_once_with(url, wait_until="commit")
         assert mock_ability.current_page == mock_page
         assert mock_page in mock_ability.pages
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        browse_the_web = cast(mock.Mock, Tester.ability_to(BrowseTheWebSynchronously))
+        browse_the_web.browser.new_page.return_value = browse_the_web.current_page
+        browse_the_web.current_page.goto.side_effect = PlaywrightError("I have no map.")
+
+        with pytest.raises(DeliveryError):
+            Visit("url").perform_as(Tester)

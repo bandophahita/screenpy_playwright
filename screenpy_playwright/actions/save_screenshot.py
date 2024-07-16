@@ -89,6 +89,7 @@ class SaveScreenshot:
         if current_page is None:
             msg = "No page has been opened! Cannot save a screenshot."
             raise UnableToAct(msg)
+
         try:
             screenshot = current_page.screenshot(path=self.path)
         except PlaywrightError as e:
