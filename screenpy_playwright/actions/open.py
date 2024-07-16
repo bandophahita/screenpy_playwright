@@ -5,7 +5,8 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, TypedDict
 
-from screenpy.pacing import beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import DeliveryError, beat
 
 from ..abilities import BrowseTheWebSynchronously
 
@@ -56,7 +57,15 @@ class Open:
         """Direct the actor to Open a webpage."""
         browse_the_web = the_actor.ability_to(BrowseTheWebSynchronously)
         page = browse_the_web.browser.new_page()
-        page.goto(self.url, **self.kwargs)
+        try:
+            page.goto(self.url, **self.kwargs)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to go to "
+                f"{self.url}: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e
+
         browse_the_web.current_page = page
         browse_the_web.pages.append(page)
 

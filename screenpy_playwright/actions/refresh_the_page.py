@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypedDict
 
-from screenpy import beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import DeliveryError, beat
 
 from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
@@ -45,4 +46,11 @@ class RefreshThePage:
     def perform_as(self, the_actor: Actor) -> None:
         """Direct the Actor to refresh the page."""
         page = the_actor.ability_to(BrowseTheWebSynchronously).current_page
-        page.reload(**self.kwargs)
+        try:
+            page.reload(**self.kwargs)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to "
+                f"refresh the page: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e

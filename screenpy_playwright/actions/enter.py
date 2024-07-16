@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypedDict
 
-from screenpy.exceptions import UnableToAct
-from screenpy.pacing import beat
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import DeliveryError, UnableToAct, beat
 
 if TYPE_CHECKING:
     from screenpy import Actor
@@ -87,7 +87,14 @@ class Enter:
             )
             raise UnableToAct(msg)
 
-        self.target.found_by(the_actor).fill(self.text, **self.kwargs)
+        try:
+            self.target.found_by(the_actor).fill(self.text, **self.kwargs)
+        except PlaywrightError as e:
+            msg = (
+                f"{the_actor} encountered an issue while attempting to enter text into "
+                f"{self.target}: {e.__class__.__name__}"
+            )
+            raise DeliveryError(msg) from e
 
     def __init__(
         self, text: str, *, mask: bool = False, **kwargs: Unpack[EnterTypes]
