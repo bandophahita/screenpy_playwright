@@ -1,6 +1,19 @@
 Release History
 ===============
 
+0.0.6 (2024-07-16)
+------------------
+
+### New Features
+
+- Added `IsPresent` Resolution, which checks if an element, uh, is present.
+
+### Improvements
+
+- Addressed several issues with the Target class, such as them not appearing as Locators. We had to do some pretty spooky magicks back here, but don't worry; you'll get autocompletion and proper typing!
+- Added wrapping around interacting with Playwright Locators to make the error messages a little more readable from a higher level.
+
+
 0.0.5 (2024-05-22)
 ------------------
 
