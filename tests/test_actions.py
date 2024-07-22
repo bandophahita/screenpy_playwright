@@ -11,6 +11,7 @@ from screenpy_playwright import (
     Click,
     Enter,
     RefreshThePage,
+    SaveConsoleLog,
     SaveScreenshot,
     Scroll,
     Select,
@@ -224,6 +225,79 @@ class TestSaveScreenshot:
             SaveScreenshot("./screenshot.png").perform_as(Tester)
 
 
+class TestSaveConsoleLog:
+
+    class_path = "screenpy_playwright.actions.save_console_log"
+
+    def test_can_be_instantiated(self) -> None:
+        ss1 = SaveConsoleLog("./consolelog.txt")
+        ss2 = SaveConsoleLog.as_("./consolelog.txt")
+        ss3 = SaveConsoleLog.as_("./consolelog.txt").and_attach_it()
+        ss4 = SaveConsoleLog.as_("./consolelog.png").and_attach_it(saw="chain")
+
+        assert isinstance(ss1, SaveConsoleLog)
+        assert isinstance(ss2, SaveConsoleLog)
+        assert isinstance(ss3, SaveConsoleLog)
+        assert isinstance(ss4, SaveConsoleLog)
+
+    def test_implements_protocol(self) -> None:
+        ss = SaveConsoleLog("./consolelog.txt")
+
+        assert isinstance(ss, Describable)
+        assert isinstance(ss, Performable)
+
+    def test_filepath_vs_filename(self) -> None:
+        test_name = "smecker.txt"
+        test_path = f"boondock/saints/{test_name}"
+
+        ss = SaveConsoleLog.as_(test_path)
+
+        assert str(ss.path) == test_path
+        assert ss.filename == test_name
+
+    @mock.patch(f"{class_path}.AttachTheFile", autospec=True)
+    def test_perform_sends_kwargs_to_attach(
+        self, mocked_attachthefile: mock.Mock, Tester: Actor
+    ) -> None:
+        test_path = "souiiie.txt"
+        test_kwargs = {"color": "Red", "weather": "Tornado"}
+        test_logs = {mock.Mock(): ["souie", "souiiie", "sooouiiie"]}
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.console_logs = test_logs  # type: ignore[assignment]
+
+        with mock.patch(f"{self.class_path}.Path", autospec=True) as mocked_path:
+            mocked_path.return_value.__str__.return_value = test_path
+            SaveConsoleLog(test_path).and_attach_it(**test_kwargs).perform_as(Tester)
+
+        mocked_attachthefile.assert_called_once_with(test_path, **test_kwargs)
+        mocked_path(test_path).write_text.assert_called_once_with(
+            "souie\nsouiiie\nsooouiiie"
+        )
+
+    def test_describe(self) -> None:
+        assert SaveConsoleLog("pth").describe() == "Save browser console log as pth"
+
+    def test_subclass(self) -> None:
+        """test code for mypy to scan without issue"""
+
+        class SubSaveConsoleLog(SaveConsoleLog):
+            pass
+
+        sss1 = SubSaveConsoleLog("./consolelog.txt")
+        sss2 = SubSaveConsoleLog.as_("./consolelog.txt")
+        sss3 = SubSaveConsoleLog.as_("./consolelog.txt").and_attach_it()
+
+        assert isinstance(sss1, SubSaveConsoleLog)
+        assert isinstance(sss2, SubSaveConsoleLog)
+        assert isinstance(sss3, SubSaveConsoleLog)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        with mock.patch(f"{self.class_path}.Path", autospec=True) as mocked_path:
+            mocked_path.return_value.write_text.side_effect = OSError("I have no pen.")
+            with pytest.raises(DeliveryError):
+                SaveConsoleLog("./consolelog.txt").perform_as(Tester)
+
+
 class TestScroll:
     def test_can_be_instantiated(self) -> None:
         s1 = Scroll(100, 200)
@@ -373,20 +447,18 @@ class TestVisit:
     def test_perform_visit(self, Tester: Actor) -> None:
         url = "https://example.org/itsdotcom"
         mock_ability = Tester.ability_to(BrowseTheWebSynchronously)
-        mock_browser = mock_ability.browser
 
         Visit(url, wait_until="commit").perform_as(Tester)
 
-        mock_new_page_func = cast(mock.Mock, mock_browser.new_page)
-        mock_new_page_func.assert_called_once()
-        mock_page = mock_new_page_func.return_value
+        mock_new_page = cast(mock.Mock, mock_ability.new_page)
+        mock_new_page.assert_called_once()
+        mock_page = mock_new_page.return_value
         mock_page.goto.assert_called_once_with(url, wait_until="commit")
-        assert mock_ability.current_page == mock_page
-        assert mock_page in mock_ability.pages
 
     def test_raises_deliveryerror(self, Tester: Actor) -> None:
         browse_the_web = cast(mock.Mock, Tester.ability_to(BrowseTheWebSynchronously))
-        browse_the_web.browser.new_page.return_value = browse_the_web.current_page
+        mock_new_page = cast(mock.Mock, browse_the_web.new_page)
+        mock_new_page.return_value = browse_the_web.current_page
         browse_the_web.current_page.goto.side_effect = PlaywrightError("I have no map.")
 
         with pytest.raises(DeliveryError):

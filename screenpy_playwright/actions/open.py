@@ -56,7 +56,7 @@ class Open:
     def perform_as(self, the_actor: Actor) -> None:
         """Direct the actor to Open a webpage."""
         browse_the_web = the_actor.ability_to(BrowseTheWebSynchronously)
-        page = browse_the_web.browser.new_page()
+        page = browse_the_web.new_page()
         try:
             page.goto(self.url, **self.kwargs)
         except PlaywrightError as e:
@@ -65,9 +65,6 @@ class Open:
                 f"{self.url}: {e.__class__.__name__}"
             )
             raise DeliveryError(msg) from e
-
-        browse_the_web.current_page = page
-        browse_the_web.pages.append(page)
 
     def __init__(self, location: str | PageObject, **kwargs: Unpack[OpenTypes]) -> None:
         url = getattr(location, "url", location)

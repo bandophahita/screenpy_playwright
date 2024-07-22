@@ -56,6 +56,16 @@ RefreshThePage
     :members:
 
 
+SaveConsoleLog
+--------------
+
+**Aliases:**
+``SavesConsoleLog``,
+
+.. autoclass:: SaveConsoleLog
+    :members:
+
+
 SaveScreenshot
 --------------
 

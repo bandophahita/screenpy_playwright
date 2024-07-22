@@ -16,5 +16,6 @@ def Tester() -> AnActor:
     BrowseTheWeb_Mocked.pages = []
     BrowseTheWeb_Mocked._current_page = None
     BrowseTheWeb_Mocked.browser = mock.Mock(spec=Browser)
+    BrowseTheWeb_Mocked.console_logs = {}
 
     return AnActor.named("Tester").who_can(BrowseTheWeb_Mocked)
