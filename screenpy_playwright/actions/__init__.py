@@ -4,6 +4,7 @@ from .click import Click
 from .enter import Enter
 from .open import Open
 from .refresh_the_page import RefreshThePage
+from .save_console_log import SaveConsoleLog
 from .save_screenshot import SaveScreenshot
 from .scroll import Scroll
 from .select import Select
@@ -13,6 +14,7 @@ Clicks = Click
 Enters = Enter
 GoTo = GoesTo = Visit = Visits = Opens = Open
 Refresh = Refreshes = RefreshesThePage = RefreshThePage
+SavesConsoleLog = SaveConsoleLog
 SavesScreenshot = SavesAScreenshot = SaveAScreenshot = SaveScreenshot
 Scrolls = Scroll
 Selects = Select
@@ -23,16 +25,18 @@ __all__ = [
     "Clicks",
     "Enter",
     "Enters",
-    "GoTo",
     "GoesTo",
+    "GoTo",
     "Open",
     "Opens",
-    "RefreshThePage",
     "RefreshesThePage",
-    "SaveScreenshot",
+    "RefreshThePage",
     "SaveAScreenshot",
-    "SavesScreenshot",
+    "SaveConsoleLog",
     "SavesAScreenshot",
+    "SavesConsoleLog",
+    "SaveScreenshot",
+    "SavesScreenshot",
     "Scroll",
     "Scrolls",
     "Select",

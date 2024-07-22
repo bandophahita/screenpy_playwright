@@ -57,6 +57,15 @@ class TestBrowseTheWebSynchronously:
         assert mock_playwright.firefox.launch.call_count == 1
         assert mock_playwright.webkit.launch.call_count == 1
 
+    def test_new_page(self) -> None:
+        playwright, browser = get_mocked_playwright_and_browser()
+        btws = BrowseTheWebSynchronously.using(playwright, browser)
+
+        page = btws.new_page()
+
+        assert btws.current_page is page
+        assert page in btws.pages
+
     def test_raises_when_no_current_page(self) -> None:
         _, browser = get_mocked_playwright_and_browser()
 
