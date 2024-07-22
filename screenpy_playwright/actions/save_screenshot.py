@@ -49,10 +49,6 @@ class SaveScreenshot:
     path: str
     filename: str
 
-    def describe(self) -> str:
-        """Describe the Action in present tense."""
-        return f"Save screenshot as {self.filename}"
-
     @classmethod
     def as_(cls, path: str) -> Self:
         """Supply the name and/or filepath for the screenshot.
@@ -64,6 +60,15 @@ class SaveScreenshot:
             path: The filepath for the screenshot, including its name.
         """
         return cls(path=path)
+
+    def __init__(self, path: str) -> None:
+        self.path = path
+        self.filename = path.split(os.path.sep)[-1]
+        self.attach_kwargs = None
+
+    def describe(self) -> str:
+        """Describe the Action in present tense."""
+        return f"Save screenshot as {self.filename}"
 
     def and_attach_it(self, **kwargs: Any) -> Self:  # noqa: ANN401
         """Indicate the screenshot should be attached to any reports.
@@ -103,8 +108,3 @@ class SaveScreenshot:
 
         if self.attach_kwargs is not None:
             the_actor.attempts_to(AttachTheFile(self.path, **self.attach_kwargs))
-
-    def __init__(self, path: str) -> None:
-        self.path = path
-        self.filename = path.split(os.path.sep)[-1]
-        self.attach_kwargs = None

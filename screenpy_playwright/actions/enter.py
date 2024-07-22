@@ -61,6 +61,18 @@ class Enter:
         """Alias for ``the_secret``, recreated for mypy."""
         return cls.the_secret(text, **kwargs)
 
+    def __init__(
+        self, text: str, *, mask: bool = False, **kwargs: Unpack[EnterTypes]
+    ) -> None:
+        self.text = text
+        self.target = None
+        self.kwargs = kwargs
+
+        if mask:
+            self.text_to_log = "[CENSORED]"
+        else:
+            self.text_to_log = text
+
     def into_the(self, target: Target, **kwargs: Unpack[EnterTypes]) -> Enter:
         """Target the element to enter text into.
 
@@ -95,15 +107,3 @@ class Enter:
                 f"{self.target}: {e.__class__.__name__}"
             )
             raise DeliveryError(msg) from e
-
-    def __init__(
-        self, text: str, *, mask: bool = False, **kwargs: Unpack[EnterTypes]
-    ) -> None:
-        self.text = text
-        self.target = None
-        self.kwargs = kwargs
-
-        if mask:
-            self.text_to_log = "[CENSORED]"
-        else:
-            self.text_to_log = text

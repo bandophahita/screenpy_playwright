@@ -56,6 +56,10 @@ class Click:
 
     on = on_the
 
+    def __init__(self, target: Target, **kwargs: Unpack[ClickTypes]) -> None:
+        self.target = target
+        self.kwargs = kwargs
+
     def describe(self) -> str:
         """Describe the Action in present tense."""
         return f"Click on the {self.target}."
@@ -71,7 +75,3 @@ class Click:
                 f"{self.target}: {e.__class__.__name__}"
             )
             raise DeliveryError(msg) from e
-
-    def __init__(self, target: Target, **kwargs: Unpack[ClickTypes]) -> None:
-        self.target = target
-        self.kwargs = kwargs

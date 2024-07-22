@@ -48,6 +48,13 @@ class Open:
 
     kwargs: OpenTypes
 
+    def __init__(self, location: str | PageObject, **kwargs: Unpack[OpenTypes]) -> None:
+        url = getattr(location, "url", location)
+        url = f'{os.getenv("BASE_URL", "")}{url}'
+
+        self.url = url
+        self.kwargs = kwargs
+
     def describe(self) -> str:
         """Describe the Action in present tense."""
         return f"Visit {self.url}"
@@ -65,10 +72,3 @@ class Open:
                 f"{self.url}: {e.__class__.__name__}"
             )
             raise DeliveryError(msg) from e
-
-    def __init__(self, location: str | PageObject, **kwargs: Unpack[OpenTypes]) -> None:
-        url = getattr(location, "url", location)
-        url = f'{os.getenv("BASE_URL", "")}{url}'
-
-        self.url = url
-        self.kwargs = kwargs
