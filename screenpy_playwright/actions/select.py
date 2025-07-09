@@ -97,7 +97,7 @@ class Select:
 
     def describe(self) -> str:
         """Describe the Action in present tense."""
-        return f"Select '{self.option_to_log}' from the {self.target}."  # noqa: S608
+        return f"Select '{self.option_to_log}' from the {self.target}."
 
     @beat("{} selects '{option_to_log}' from the {target}.")
     def perform_as(self, the_actor: Actor) -> None:
