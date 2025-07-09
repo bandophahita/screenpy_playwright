@@ -3,13 +3,18 @@ from typing import cast
 from unittest import mock
 
 import pytest
-from screenpy import Actor, Describable, Performable, UnableToAct
+from playwright.sync_api import Error as PlaywrightError
+from screenpy import Actor, DeliveryError, Describable, Performable, UnableToAct
 
 from screenpy_playwright import (
     BrowseTheWebSynchronously,
     Click,
     Enter,
+    RefreshThePage,
+    SaveConsoleLog,
     SaveScreenshot,
+    Scroll,
+    Select,
     Visit,
 )
 
@@ -42,10 +47,17 @@ class TestClick:
     def test_perform_click(self, Tester: Actor) -> None:
         target, locator = get_mocked_target_and_locator()
 
-        Click.on_the(target).perform_as(Tester)
+        Click(target, delay=0.5).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        locator.click.assert_called_once()
+        locator.click.assert_called_once_with(delay=0.5)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        locator.click.side_effect = PlaywrightError("I have no more pens.")
+
+        with pytest.raises(DeliveryError):
+            Click(target).perform_as(Tester)
 
 
 class TestEnter:
@@ -54,11 +66,13 @@ class TestEnter:
         e2 = Enter.the_text("")
         e3 = Enter.the_secret("")
         e4 = Enter.the_text("").into_the(TARGET)
+        e5 = Enter.the_password("").into_the(TARGET)
 
         assert isinstance(e1, Enter)
         assert isinstance(e2, Enter)
         assert isinstance(e3, Enter)
         assert isinstance(e4, Enter)
+        assert isinstance(e5, Enter)
 
     def test_implements_protocol(self) -> None:
         e = Enter("")
@@ -89,10 +103,52 @@ class TestEnter:
         target, locator = get_mocked_target_and_locator()
         text = "I wanna be, the very best."
 
-        Enter.the_text(text).into_the(target).perform_as(Tester)
+        Enter(text, force=True).into_the(target).perform_as(Tester)
 
         target.found_by.assert_called_once_with(Tester)
-        locator.fill.assert_called_once_with(text)
+        locator.fill.assert_called_once_with(text, force=True)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        locator.fill.side_effect = PlaywrightError("I have no more ink.")
+
+        with pytest.raises(DeliveryError):
+            Enter("quietly").into_the(target).perform_as(Tester)
+
+
+class TestRefreshThePage:
+    def test_can_be_instantiated(self) -> None:
+        r1 = RefreshThePage()
+
+        assert isinstance(r1, RefreshThePage)
+
+    def test_implements_protocol(self) -> None:
+        r = RefreshThePage()
+
+        assert isinstance(r, Describable)
+        assert isinstance(r, Performable)
+
+    def test_describe(self) -> None:
+        assert RefreshThePage().describe() == "Refresh the page."
+
+    def test_perform_refresh(self, Tester: Actor) -> None:
+        current_page = mock.Mock()
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.pages.append(current_page)
+        btws.current_page = current_page
+
+        RefreshThePage(timeout=20).perform_as(Tester)
+
+        current_page.reload.assert_called_once_with(timeout=20)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        page = cast(
+            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+        )
+        page.reload.side_effect = PlaywrightError("I have no more paper.")
+
+        with pytest.raises(DeliveryError):
+            RefreshThePage().perform_as(Tester)
 
 
 class TestSaveScreenshot:
@@ -159,6 +215,200 @@ class TestSaveScreenshot:
         assert isinstance(sss2, SubSaveScreenshot)
         assert isinstance(sss3, SubSaveScreenshot)
 
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        page = cast(
+            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+        )
+        page.screenshot.side_effect = PlaywrightError("I have no camera.")
+
+        with pytest.raises(DeliveryError):
+            SaveScreenshot("./screenshot.png").perform_as(Tester)
+
+
+class TestSaveConsoleLog:
+
+    class_path = "screenpy_playwright.actions.save_console_log"
+
+    def test_can_be_instantiated(self) -> None:
+        ss1 = SaveConsoleLog("./consolelog.txt")
+        ss2 = SaveConsoleLog.as_("./consolelog.txt")
+        ss3 = SaveConsoleLog.as_("./consolelog.txt").and_attach_it()
+        ss4 = SaveConsoleLog.as_("./consolelog.png").and_attach_it(saw="chain")
+
+        assert isinstance(ss1, SaveConsoleLog)
+        assert isinstance(ss2, SaveConsoleLog)
+        assert isinstance(ss3, SaveConsoleLog)
+        assert isinstance(ss4, SaveConsoleLog)
+
+    def test_implements_protocol(self) -> None:
+        ss = SaveConsoleLog("./consolelog.txt")
+
+        assert isinstance(ss, Describable)
+        assert isinstance(ss, Performable)
+
+    def test_filepath_vs_filename(self) -> None:
+        test_name = "smecker.txt"
+        test_path = f"boondock/saints/{test_name}"
+
+        ss = SaveConsoleLog.as_(test_path)
+
+        assert str(ss.path) == test_path
+        assert ss.filename == test_name
+
+    @mock.patch(f"{class_path}.AttachTheFile", autospec=True)
+    def test_perform_sends_kwargs_to_attach(
+        self, mocked_attachthefile: mock.Mock, Tester: Actor
+    ) -> None:
+        test_path = "souiiie.txt"
+        test_kwargs = {"color": "Red", "weather": "Tornado"}
+        test_logs = {mock.Mock(): ["souie", "souiiie", "sooouiiie"]}
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.console_logs = test_logs  # type: ignore[assignment]
+
+        with mock.patch(f"{self.class_path}.Path", autospec=True) as mocked_path:
+            mocked_path.return_value.__str__.return_value = test_path
+            SaveConsoleLog(test_path).and_attach_it(**test_kwargs).perform_as(Tester)
+
+        mocked_attachthefile.assert_called_once_with(test_path, **test_kwargs)
+        mocked_path(test_path).write_text.assert_called_once_with(
+            "souie\nsouiiie\nsooouiiie"
+        )
+
+    def test_describe(self) -> None:
+        assert SaveConsoleLog("pth").describe() == "Save browser console log as pth"
+
+    def test_subclass(self) -> None:
+        """test code for mypy to scan without issue"""
+
+        class SubSaveConsoleLog(SaveConsoleLog):
+            pass
+
+        sss1 = SubSaveConsoleLog("./consolelog.txt")
+        sss2 = SubSaveConsoleLog.as_("./consolelog.txt")
+        sss3 = SubSaveConsoleLog.as_("./consolelog.txt").and_attach_it()
+
+        assert isinstance(sss1, SubSaveConsoleLog)
+        assert isinstance(sss2, SubSaveConsoleLog)
+        assert isinstance(sss3, SubSaveConsoleLog)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        with mock.patch(f"{self.class_path}.Path", autospec=True) as mocked_path:
+            mocked_path.return_value.write_text.side_effect = OSError("I have no pen.")
+            with pytest.raises(DeliveryError):
+                SaveConsoleLog("./consolelog.txt").perform_as(Tester)
+
+
+class TestScroll:
+    def test_can_be_instantiated(self) -> None:
+        s1 = Scroll(100, 200)
+        s2 = Scroll.up(100)
+        s3 = Scroll.down(100)
+        s4 = Scroll.left(100)
+        s5 = Scroll.right(100)
+
+        assert isinstance(s1, Scroll)
+        assert isinstance(s2, Scroll)
+        assert isinstance(s3, Scroll)
+        assert isinstance(s4, Scroll)
+        assert isinstance(s5, Scroll)
+
+    def test_implements_protocol(self) -> None:
+        s = Scroll(100, 200)
+
+        assert isinstance(s, Describable)
+        assert isinstance(s, Performable)
+
+    @pytest.mark.parametrize(
+        ("delta_x", "delta_y", "expected"),
+        [
+            (100, 200, "100 pixels right and 200 pixels down"),
+            (-100, -200, "100 pixels left and 200 pixels up"),
+            (0, 200, "200 pixels down"),
+            (100, 0, "100 pixels right"),
+            (0, 0, "nowhere"),
+        ],
+    )
+    def test_describe(self, delta_x: int, delta_y: int, expected: str) -> None:
+        assert Scroll(delta_x, delta_y).describe() == f"Scroll the page {expected}."
+
+    def test_scroll_fixes_direction(self) -> None:
+        test_num = 100
+        s_up = Scroll.up(test_num)
+        s_down = Scroll.down(-test_num)
+        s_left = Scroll.left(test_num)
+        s_right = Scroll.right(-test_num)
+
+        assert s_up.delta_y == -test_num
+        assert s_down.delta_y == test_num
+        assert s_left.delta_x == -test_num
+        assert s_right.delta_x == test_num
+
+    def test_perform_scroll(self, Tester: Actor) -> None:
+        current_page = mock.Mock()
+        btws = Tester.ability_to(BrowseTheWebSynchronously)
+        btws.pages.append(current_page)
+        btws.current_page = current_page
+
+        Scroll(1337, -9001).perform_as(Tester)
+
+        current_page.mouse.wheel.assert_called_once_with(delta_x=1337, delta_y=-9001)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        page = cast(
+            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+        )
+        page.mouse.wheel.side_effect = PlaywrightError("I have no legs.")
+
+        with pytest.raises(DeliveryError):
+            Scroll(1337, -9001).perform_as(Tester)
+
+
+class TestSelect:
+    def test_can_be_instantiated(self) -> None:
+        s1 = Select("option")
+        s2 = Select.the_option("option")
+        s3 = Select.the_option("option").from_the(TARGET)
+
+        assert isinstance(s1, Select)
+        assert isinstance(s2, Select)
+        assert isinstance(s3, Select)
+
+    def test_implements_protocol(self) -> None:
+        s = Select("option")
+
+        assert isinstance(s, Describable)
+        assert isinstance(s, Performable)
+
+    def test_describe(self) -> None:
+        target = FakeTarget()
+        target._description = "The Holy Hand Grenade"
+        option = "option"
+        s1 = Select(option).from_the(target)
+        s2 = Select(option, option).from_the(target)
+
+        assert s1.describe() == f"Select '{option}' from the {target}."
+        assert s2.describe() == f"Select '{option}', '{option}' from the {target}."
+
+    def test_perform_select(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        option = "option"
+
+        Select(option, no_wait_after=True).from_the(target).perform_as(Tester)
+
+        target.found_by.assert_called_once_with(Tester)
+        locator.select_option.assert_called_once_with((option,), no_wait_after=True)
+
+    def test_raises_with_no_target(self, Tester: Actor) -> None:
+        with pytest.raises(UnableToAct):
+            Select("option").perform_as(Tester)
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        target, locator = get_mocked_target_and_locator()
+        locator.select_option.side_effect = PlaywrightError("I have no opinions.")
+
+        with pytest.raises(DeliveryError):
+            Select("option").from_the(target).perform_as(Tester)
+
 
 class TestVisit:
     def test_can_be_instantiated(self) -> None:
@@ -197,13 +447,19 @@ class TestVisit:
     def test_perform_visit(self, Tester: Actor) -> None:
         url = "https://example.org/itsdotcom"
         mock_ability = Tester.ability_to(BrowseTheWebSynchronously)
-        mock_browser = mock_ability.browser
 
-        Visit(url).perform_as(Tester)
+        Visit(url, wait_until="commit").perform_as(Tester)
 
-        mock_new_page_func = cast(mock.Mock, mock_browser.new_page)
-        mock_new_page_func.assert_called_once()
-        mock_page = mock_new_page_func.return_value
-        mock_page.goto.assert_called_once_with(url)
-        assert mock_ability.current_page == mock_page
-        assert mock_page in mock_ability.pages
+        mock_new_page = cast(mock.Mock, mock_ability.new_page)
+        mock_new_page.assert_called_once()
+        mock_page = mock_new_page.return_value
+        mock_page.goto.assert_called_once_with(url, wait_until="commit")
+
+    def test_raises_deliveryerror(self, Tester: Actor) -> None:
+        browse_the_web = cast(mock.Mock, Tester.ability_to(BrowseTheWebSynchronously))
+        mock_new_page = cast(mock.Mock, browse_the_web.new_page)
+        mock_new_page.return_value = browse_the_web.current_page
+        browse_the_web.current_page.goto.side_effect = PlaywrightError("I have no map.")
+
+        with pytest.raises(DeliveryError):
+            Visit("url").perform_as(Tester)

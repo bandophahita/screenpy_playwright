@@ -1,6 +1,10 @@
 """Exceptions thrown by ScreenPy: Playwright."""
 
-from screenpy.exceptions import ScreenPyError
+from screenpy.exceptions import AbilityError, ScreenPyError
+
+
+class NoPageError(AbilityError):
+    """The Actor has no open pages."""
 
 
 class TargetingError(ScreenPyError):

@@ -32,6 +32,9 @@ class Number:
         """
         return Number(target)
 
+    def __init__(self, target: Target) -> None:
+        self.target = target
+
     def describe(self) -> str:
         """Describe the Question in the present tense.
 
@@ -48,6 +51,3 @@ class Number:
             The number of elements the Actor found.
         """
         return self.target.found_by(the_actor).count()
-
-    def __init__(self, target: Target) -> None:
-        self.target = target

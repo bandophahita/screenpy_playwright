@@ -19,7 +19,8 @@ class Attribute:
     Abilities Required:
         :class:`~screenpy_playwright.abilities.BrowseTheWebSynchronously`
 
-    Examples:
+    Examples::
+
         the_actor.should(
             See.the(
                 Attribute("aria-label").of_the(LOGIN_LINK),

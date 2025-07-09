@@ -34,6 +34,9 @@ class Text:
         """
         return Text(target)
 
+    def __init__(self, target: Target) -> None:
+        self.target = target
+
     def describe(self) -> str:
         """Describe the Question in the present tense.
 
@@ -50,6 +53,3 @@ class Text:
             The text found by the Actor.
         """
         return self.target.found_by(the_actor).text_content()
-
-    def __init__(self, target: Target) -> None:
-        self.target = target

@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from screenpy import Forgettable
 
-from screenpy_playwright import BrowseTheWebSynchronously
+from screenpy_playwright import BrowseTheWebSynchronously, NoPageError
 
 from .useful_mocks import get_mocked_playwright_and_browser
 
@@ -56,3 +56,28 @@ class TestBrowseTheWebSynchronously:
         assert mock_playwright.chromium.launch.call_count == 1
         assert mock_playwright.firefox.launch.call_count == 1
         assert mock_playwright.webkit.launch.call_count == 1
+
+    def test_new_page(self) -> None:
+        playwright, browser = get_mocked_playwright_and_browser()
+        btws = BrowseTheWebSynchronously.using(playwright, browser)
+
+        page = btws.new_page()
+
+        assert btws.current_page is page
+        assert page in btws.pages
+
+    def test_raises_when_no_current_page(self) -> None:
+        _, browser = get_mocked_playwright_and_browser()
+
+        with pytest.raises(NoPageError):
+            # accessing the attribute will raise if it's None
+            BrowseTheWebSynchronously(browser).current_page  # noqa: B018
+
+    def test_forget_does_not_clear_playwright(self) -> None:
+        mock_playwright, mock_browser = get_mocked_playwright_and_browser()
+        btws = BrowseTheWebSynchronously.using(mock_playwright, mock_browser)
+
+        btws.forget()
+
+        assert BrowseTheWebSynchronously.playwright is mock_playwright
+        assert mock_browser.close.call_count == 1

@@ -123,6 +123,9 @@ split-on-trailing-comma = false
     "PLR",  # likewise using specific numbers and strings in tests.
 ]
 "__version__.py" = ["D"]
+"*.pyi" = [
+    "PLR0913",  # it's not our fault they have too many parameters!
+]
 
 
 ################################################################################
@@ -131,7 +134,7 @@ split-on-trailing-comma = false
 
 [tool.poetry]
 name = "screenpy_playwright"
-version = "0.0.3"
+version = "0.0.6"
 description = "ScreenPy extension to enable interacting with Playwright."
 authors = ["Perry Goy <perry.goy@gmail.com>"]
 maintainers = ["Marcel Wilson"]
