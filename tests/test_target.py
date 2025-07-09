@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     )
 
 
-class Test_Manipulations:
+class TestManipulations:
     def test_proper_display(self) -> None:
         name = "viking"
         args: _ManipulationArgsType = ("spam", "eggs", 1, None)

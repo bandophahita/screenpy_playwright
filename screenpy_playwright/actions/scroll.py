@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from playwright.sync_api import Error as PlaywrightError
 from screenpy import DeliveryError, beat
 
-from ..abilities import BrowseTheWebSynchronously
+from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 if TYPE_CHECKING:
     from screenpy import Actor

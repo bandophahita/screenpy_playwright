@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Callable
 
 from playwright.sync_api import sync_playwright
 
-from ..exceptions import NoPageError
+from screenpy_playwright.exceptions import NoPageError
 
 if TYPE_CHECKING:
     from playwright.sync_api import (

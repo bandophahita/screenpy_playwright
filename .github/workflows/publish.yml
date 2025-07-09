@@ -23,7 +23,7 @@ jobs:
           pip install
           poetry
           --user
-      - name: Build ScreenPy Playwright
+      - name: "Build ScreenPy Playwright"
         run: >-
           python -m
           poetry

@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence, TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from playwright.sync_api import Error as PlaywrightError
 from screenpy import DeliveryError, UnableToAct, beat
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from playwright.sync_api import ElementHandle
     from screenpy import Actor
     from typing_extensions import NotRequired, Self, Unpack
@@ -95,7 +97,7 @@ class Select:
 
     def describe(self) -> str:
         """Describe the Action in present tense."""
-        return f"Select '{self.option_to_log}' from the {self.target}."
+        return f"Select '{self.option_to_log}' from the {self.target}."  # noqa: S608
 
     @beat("{} selects '{option_to_log}' from the {target}.")
     def perform_as(self, the_actor: Actor) -> None:

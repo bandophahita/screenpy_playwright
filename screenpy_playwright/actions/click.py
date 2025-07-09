@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence, TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from playwright.sync_api import Error as PlaywrightError
 from screenpy import DeliveryError, beat
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from playwright.sync_api import Position
     from screenpy import Actor
     from typing_extensions import Literal, NotRequired, Self, Unpack
 
-    from ..target import Target
+    from screenpy_playwright.target import Target
 
     class ClickTypes(TypedDict):
         """Types that can be passed to Playwright's ElementHandle.click method."""

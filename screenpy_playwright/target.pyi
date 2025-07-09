@@ -1,20 +1,19 @@
-"""Used to overwrite type hints for Locator methods from Playwright.
-
-Hopefully this is only temporary.  -pgoy 2024-JUL-12
-"""
+# Used to overwrite type hints for Locator methods from Playwright.
+# Hopefully this is only temporary.  -pgoy 2024-JUL-12
 
 from collections import UserString
 from dataclasses import dataclass
-from typing import Pattern, TypedDict
+from re import Pattern
+from typing import TypedDict
 
 from playwright.sync_api import FrameLocator, Locator
 from screenpy import Actor as Actor
-from typing_extensions import NotRequired, Self, Unpack
+from typing_extensions import NotRequired, Self, TypeAlias, Unpack
 
 from .abilities import BrowseTheWebSynchronously as BrowseTheWebSynchronously
 from .exceptions import TargetingError as TargetingError
 
-_ManipulationArgsType = tuple[str | int | None, ...]
+_ManipulationArgsType: TypeAlias = tuple[str | int | None, ...]
 
 class _ManipulationKwargsType(TypedDict):
     has_text: NotRequired[str | Pattern[str] | None]
@@ -73,20 +72,30 @@ class Target(FrameLocator, Locator):
     def filter(
         self,
         *,
-        has_text: str | Pattern | None = None,
-        has_not_text: str | Pattern | None = None,
+        has_text: Pattern | str | None = None,
+        has_not_text: Pattern | str | None = None,
         has: Locator | Target | None = None,
         has_not: Locator | Target | None = None,
+        visible: bool | None = None,
     ) -> Target: ...
     def frame_locator(self, selector: str) -> Target: ...
     def get_by_alt_text(
-        self, text: str | Pattern, *, exact: bool | None = None
+        self,
+        text: str | Pattern,
+        *,
+        exact: bool | None = None,
     ) -> Target: ...
     def get_by_label(
-        self, text: str | Pattern, *, exact: bool | None = None
+        self,
+        text: str | Pattern,
+        *,
+        exact: bool | None = None,
     ) -> Target: ...
     def get_by_placeholder(
-        self, text: str | Pattern, *, exact: bool | None = None
+        self,
+        text: str | Pattern,
+        *,
+        exact: bool | None = None,
     ) -> Target: ...
     def get_by_role(
         self,
@@ -104,10 +113,16 @@ class Target(FrameLocator, Locator):
     ) -> Target: ...
     def get_by_test_id(self, test_id: str | Pattern) -> Target: ...
     def get_by_text(
-        self, text: str | Pattern, *, exact: bool | None = None
+        self,
+        text: str | Pattern,
+        *,
+        exact: bool | None = None,
     ) -> Target: ...
     def get_by_title(
-        self, text: str | Pattern, *, exact: bool | None = None
+        self,
+        text: str | Pattern,
+        *,
+        exact: bool | None = None,
     ) -> Target: ...
     def locator(
         self,

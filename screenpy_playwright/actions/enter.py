@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from screenpy import Actor
     from typing_extensions import NotRequired, Self, Unpack
 
-    from ..target import Target
+    from screenpy_playwright.target import Target
 
     class EnterTypes(TypedDict):
         """Types that can be passed to Playwright's ElementHandle.fill method."""
@@ -62,7 +62,11 @@ class Enter:
         return cls.the_secret(text, **kwargs)
 
     def __init__(
-        self, text: str, *, mask: bool = False, **kwargs: Unpack[EnterTypes]
+        self,
+        text: str,
+        *,
+        mask: bool = False,
+        **kwargs: Unpack[EnterTypes],
     ) -> None:
         self.text = text
         self.target = None

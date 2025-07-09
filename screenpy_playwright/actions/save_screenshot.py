@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 from playwright.sync_api import Error as PlaywrightError
 from screenpy import AttachTheFile, DeliveryError, UnableToAct, beat
 
-from ..abilities import BrowseTheWebSynchronously
+from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 if TYPE_CHECKING:
     from screenpy import Actor
