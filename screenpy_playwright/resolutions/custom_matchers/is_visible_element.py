@@ -34,7 +34,9 @@ class IsVisibleElement(BaseMatcher[Optional[Locator]]):
         match_description.append_text("it was visible")
 
     def describe_mismatch(
-        self, item: Locator | None, mismatch_description: Description
+        self,
+        item: Locator | None,
+        mismatch_description: Description,
     ) -> None:
         """Describe the failing case."""
         if item is None:

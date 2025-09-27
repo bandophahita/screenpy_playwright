@@ -34,7 +34,9 @@ class IsPresentElement(BaseMatcher[Optional[Locator]]):
         match_description.append_text("it was present")
 
     def describe_mismatch(
-        self, _: Locator | None, mismatch_description: Description
+        self,
+        _: Locator | None,
+        mismatch_description: Description,
     ) -> None:
         """Describe the failing case."""
         mismatch_description.append_text("was not present")

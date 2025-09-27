@@ -9,7 +9,7 @@ from screenpy import AnActor
 from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 
-@pytest.fixture()
+@pytest.fixture
 def Tester() -> AnActor:
     """Provide an Actor with mocked web browsing abilities."""
     BrowseTheWeb_Mocked = mock.Mock(spec=BrowseTheWebSynchronously)

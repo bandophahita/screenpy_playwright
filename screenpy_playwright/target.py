@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import UserString
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Pattern, Tuple, TypedDict, Union
+from typing import TYPE_CHECKING, TypedDict, Union
 
 from playwright.sync_api import FrameLocator, Locator
 
@@ -12,10 +12,12 @@ from .abilities import BrowseTheWebSynchronously
 from .exceptions import TargetingError
 
 if TYPE_CHECKING:
+    from re import Pattern
+
     from screenpy import Actor
     from typing_extensions import NotRequired, Self, Unpack
 
-    _ManipulationArgsType = Tuple[Union[str, int, None], ...]
+    _ManipulationArgsType = tuple[Union[str, int, None], ...]
 
     class _ManipulationKwargsType(TypedDict):
         """Types for kwargs that are passed to Playwright's locator methods."""
@@ -135,14 +137,14 @@ class Target(Locator, FrameLocator):
     def located_by(self, locator: str) -> Target:
         """Provide the CSS locator which describes the element."""
         self.manipulations.append(
-            _Manipulation(self, "locator", args=(locator,), kwargs={})
+            _Manipulation(self, "locator", args=(locator,), kwargs={}),
         )
         return self
 
     def in_frame(self, frame_locator: str) -> Target:
         """Provide the CSS locator which describes the frame."""
         self.manipulations.append(
-            _Manipulation(self, "frame_locator", args=(frame_locator,), kwargs={})
+            _Manipulation(self, "frame_locator", args=(frame_locator,), kwargs={}),
         )
         return self
 

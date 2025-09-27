@@ -9,7 +9,7 @@ from screenpy.pacing import beat
 if TYPE_CHECKING:
     from screenpy import Actor
 
-    from ..target import Target
+    from screenpy_playwright.target import Target
 
 
 class Text:

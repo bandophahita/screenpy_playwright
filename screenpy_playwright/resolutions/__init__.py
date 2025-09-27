@@ -8,8 +8,8 @@ Visible = IsVisible
 Exists = Exist = Present = IsPresent
 
 __all__ = [
-    "Exists",
     "Exist",
+    "Exists",
     "IsPresent",
     "IsVisible",
     "Present",

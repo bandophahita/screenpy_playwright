@@ -17,10 +17,10 @@ def get_mocked_locator() -> mock.Mock:
 
 def get_mock_target_class() -> mock.Mock:
     class FakeTarget(Target):
-        def __new__(cls, *args: object, **kwargs: object) -> FakeTarget:  # noqa: ARG003
+        def __new__(cls, *args: object, **kwargs: object) -> FakeTarget:  # noqa: ARG004
             return mock.create_autospec(FakeTarget, instance=True)
 
-    return cast(mock.Mock, FakeTarget)
+    return cast("mock.Mock", FakeTarget)
 
 
 def get_mocked_target_and_locator() -> tuple[mock.Mock, mock.Mock]:
@@ -33,7 +33,7 @@ def get_mocked_target_and_locator() -> tuple[mock.Mock, mock.Mock]:
 
 
 def get_mocked_browser(actor: Actor) -> mock.Mock:
-    return cast(mock.Mock, actor.ability_to(BrowseTheWebSynchronously).browser)
+    return cast("mock.Mock", actor.ability_to(BrowseTheWebSynchronously).browser)
 
 
 def get_mocked_playwright_and_browser() -> tuple[mock.Mock, mock.Mock]:

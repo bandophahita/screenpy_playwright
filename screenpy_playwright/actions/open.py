@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING, TypedDict
 from playwright.sync_api import Error as PlaywrightError
 from screenpy import DeliveryError, beat
 
-from ..abilities import BrowseTheWebSynchronously
+from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 if TYPE_CHECKING:
     from screenpy import Actor
     from typing_extensions import Literal, NotRequired, Unpack
 
-    from ..protocols import PageObject
+    from screenpy_playwright.protocols import PageObject
 
     class OpenTypes(TypedDict):
         """Types that can be passed to Playwright's Page.goto method."""

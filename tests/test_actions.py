@@ -143,7 +143,8 @@ class TestRefreshThePage:
 
     def test_raises_deliveryerror(self, Tester: Actor) -> None:
         page = cast(
-            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+            "mock.Mock",
+            Tester.ability_to(BrowseTheWebSynchronously).current_page,
         )
         page.reload.side_effect = PlaywrightError("I have no more paper.")
 
@@ -183,7 +184,9 @@ class TestSaveScreenshot:
 
     @mock.patch(f"{class_path}.AttachTheFile", autospec=True)
     def test_perform_sends_kwargs_to_attach(
-        self, mocked_attachthefile: mock.Mock, Tester: Actor
+        self,
+        mocked_attachthefile: mock.Mock,
+        Tester: Actor,
     ) -> None:
         test_path = "souiiie.png"
         test_kwargs = {"color": "Red", "weather": "Tornado"}
@@ -217,7 +220,8 @@ class TestSaveScreenshot:
 
     def test_raises_deliveryerror(self, Tester: Actor) -> None:
         page = cast(
-            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+            "mock.Mock",
+            Tester.ability_to(BrowseTheWebSynchronously).current_page,
         )
         page.screenshot.side_effect = PlaywrightError("I have no camera.")
 
@@ -257,7 +261,9 @@ class TestSaveConsoleLog:
 
     @mock.patch(f"{class_path}.AttachTheFile", autospec=True)
     def test_perform_sends_kwargs_to_attach(
-        self, mocked_attachthefile: mock.Mock, Tester: Actor
+        self,
+        mocked_attachthefile: mock.Mock,
+        Tester: Actor,
     ) -> None:
         test_path = "souiiie.txt"
         test_kwargs = {"color": "Red", "weather": "Tornado"}
@@ -271,7 +277,7 @@ class TestSaveConsoleLog:
 
         mocked_attachthefile.assert_called_once_with(test_path, **test_kwargs)
         mocked_path(test_path).write_text.assert_called_once_with(
-            "souie\nsouiiie\nsooouiiie"
+            "souie\nsouiiie\nsooouiiie",
         )
 
     def test_describe(self) -> None:
@@ -355,7 +361,8 @@ class TestScroll:
 
     def test_raises_deliveryerror(self, Tester: Actor) -> None:
         page = cast(
-            mock.Mock, Tester.ability_to(BrowseTheWebSynchronously).current_page
+            "mock.Mock",
+            Tester.ability_to(BrowseTheWebSynchronously).current_page,
         )
         page.mouse.wheel.side_effect = PlaywrightError("I have no legs.")
 
@@ -450,14 +457,14 @@ class TestVisit:
 
         Visit(url, wait_until="commit").perform_as(Tester)
 
-        mock_new_page = cast(mock.Mock, mock_ability.new_page)
+        mock_new_page = cast("mock.Mock", mock_ability.new_page)
         mock_new_page.assert_called_once()
         mock_page = mock_new_page.return_value
         mock_page.goto.assert_called_once_with(url, wait_until="commit")
 
     def test_raises_deliveryerror(self, Tester: Actor) -> None:
-        browse_the_web = cast(mock.Mock, Tester.ability_to(BrowseTheWebSynchronously))
-        mock_new_page = cast(mock.Mock, browse_the_web.new_page)
+        browse_the_web = cast("mock.Mock", Tester.ability_to(BrowseTheWebSynchronously))
+        mock_new_page = cast("mock.Mock", browse_the_web.new_page)
         mock_new_page.return_value = browse_the_web.current_page
         browse_the_web.current_page.goto.side_effect = PlaywrightError("I have no map.")
 

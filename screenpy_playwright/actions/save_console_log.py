@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from screenpy import AttachTheFile, DeliveryError, beat
 
-from ..abilities import BrowseTheWebSynchronously
+from screenpy_playwright.abilities import BrowseTheWebSynchronously
 
 if TYPE_CHECKING:
     from playwright.sync_api import ConsoleMessage
@@ -91,7 +91,7 @@ class SaveConsoleLog:
         """Direct the actor to save their browser's console log."""
         browse_the_web = the_actor.ability_to(BrowseTheWebSynchronously)
         all_logs: chain[ConsoleMessage] = chain.from_iterable(
-            browse_the_web.console_logs.values()  # type: ignore[arg-type]
+            browse_the_web.console_logs.values(),  # type: ignore[arg-type]
         )
 
         try:
