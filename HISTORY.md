@@ -1,8 +1,6 @@
 Release History
 ===============
 
-<<<<<<< HEAD
-=======
 0.0.6 (2024-07-16)
 ------------------
 
@@ -41,24 +39,11 @@ Release History
 - Enabled multiple Actors to be able to `exit` without breaking Playwright for each other.
 
 
->>>>>>> 1538e8c2669a76c099e65e7bc15a0e58a3cbac85
 0.0.3 (2024-02-21)
 ------------------
 
 ### New Features
 
-<<<<<<< HEAD
-- Added a `SaveScreenshot` Action to do the needful.
-- Added an `Attribute` Question to ask about an element's HTML attributes.
-
-### Improvements
-
-- Added support to `Target` to be able to handle iframes, those pesky buggers. Use the new `in_frame` method to supply the locator!
-
-### Development Niceties
-
-- Standardized the project against the other ScreenPy repos (big big thanks to @bandophahita!).
-=======
 - Added new Action: ``SaveScreenshot``
 - Added new Question: ``Attribute``
 - `Target` can now find things in iframes!
@@ -66,7 +51,6 @@ Release History
 ## Development Niceties
 
 - ScreenPy: Playwright is now standardized with the other ScreenPy projects (thanks, @bandophahita)!
->>>>>>> 1538e8c2669a76c099e65e7bc15a0e58a3cbac85
 
 
 0.0.2 (2024-02-13)
